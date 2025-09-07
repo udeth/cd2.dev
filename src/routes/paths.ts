@@ -30,9 +30,9 @@ export const paths = {
   docs: 'https://docs.cd2.dev/',
   changelog: 'https://changelog.cd2.dev/',
   zoneStore: 'https://store.cd2.dev/store/items/zone-landing-page/',
-  minimalStore: 'https://store.cd2.dev/store/items/minimal-dashboard/',
-  freeUI: 'https://store.cd2.dev/store/items/minimal-dashboard-free/',
-  figmaUrl: 'https://www.figma.com/design/WadcoP3CSejUDj7YZc87xj/%5BPreview%5D-Minimal-Web.v7.3.0',
+  minimalStore: 'https://store.cd2.dev/store/items/dashboard/',
+  freeUI: 'https://store.cd2.dev/store/items/dashboard-free/',
+  figmaUrl: 'https://www.figma.com/design/WadcoP3CSejUDj7YZc87xj-Web.v7.3.0',
   product: {
     root: `/product`,
     checkout: `/product/checkout`,

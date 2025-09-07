@@ -86,7 +86,7 @@ const renderDescription = () => (
       }}
     >
       Get started with
-      <br /> Minimal kit
+      <br /> Development kit
       <Box
         component="span"
         sx={(theme) => ({

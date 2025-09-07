@@ -99,7 +99,7 @@ export function HomeHero({ sx, ...other }: BoxProps) {
             }),
           ]}
         >
-          Minimal
+          cd2dev
         </Box>
       </Box>
     </m.div>
@@ -117,7 +117,7 @@ export function HomeHero({ sx, ...other }: BoxProps) {
           }),
         ]}
       >
-        {`The starting point for your next project is based on MUI. \nEasy customization helps you build apps faster and better.`}
+        {`The starting point for your next project is based on cd2dev. \nEasy customization helps you build apps faster and better.`}
       </Typography>
     </m.div>
   );

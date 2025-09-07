@@ -29,7 +29,7 @@ const FAQs = [
       <Typography>
         You will get 12 months of free
         <Link
-          href="https://support.mui.com/hc/en-us/articles/360008775240-How-do-I-get-access-to-an-item-I-purchased"
+          href="https://support.cd2.dev/hc/en-us/articles/360008775240-How-do-I-get-access-to-an-item-I-purchased"
           target="_blank"
           rel="noopener noreferrer"
           sx={{ mx: 0.5 }}
@@ -56,7 +56,7 @@ const FAQs = [
         <li>
           Learn more about the
           <Link
-            href="https://docs.minimals.cc/package/"
+            href="https://docs.cd2.dev/package/"
             target="_blank"
             rel="noopener noreferrer"
             sx={{ mx: 0.5 }}
@@ -77,23 +77,6 @@ const FAQs = [
     ),
   },
   {
-    question: 'Which platforms will the template support?',
-    answer: (
-      <Typography>
-        {`The components in MUI are designed to work in the latest, stable releases of all major browsers, including Chrome, Firefox, Safari, and Edge. We don't support Internet Explorer 11. `}
-        Learn more about the
-        <Link
-          href="https://mui.com/material-ui/getting-started/supported-platforms/"
-          target="_blank"
-          rel="noopener noreferrer"
-          sx={{ mx: 0.5 }}
-        >
-          supported platforms
-        </Link>
-      </Typography>
-    ),
-  },
-  {
     question: 'For what kind of projects is the Standard license intended?',
     answer: (
       <Typography>
@@ -109,7 +92,7 @@ const FAQs = [
       <Typography>
         Yes, you can check out our
         <Link
-          href="https://mui.com/store/items/minimal-dashboard-free/"
+          href="https://store.cd2.dev/store/items/cd2dev-dashboard-free/"
           target="_blank"
           rel="noopener noreferrer"
           sx={{ mx: 0.5 }}
@@ -218,7 +201,7 @@ export function HomeFAQs({ sx, ...other }: BoxProps) {
         <Button
           color="inherit"
           variant="contained"
-          href="mailto:support@minimals.cc?subject=[Feedback] from Customer"
+          href="mailto:mail@qiming.li?subject=[Feedback] from Customer"
           startIcon={<Iconify icon="solar:letter-bold" />}
         >
           Contact us

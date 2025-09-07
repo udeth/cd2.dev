@@ -101,7 +101,7 @@ export function HomeZoneUI({ sx, ...other }: BoxProps) {
             '&:hover': { bgcolor: 'common.white' },
           }}
         >
-          Visit Zone UI
+          Visit Idnyx
         </Button>
       </Box>
     </Stack>

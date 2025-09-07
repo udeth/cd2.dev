@@ -35,12 +35,6 @@ export function HomeView() {
       <Stack sx={{ position: 'relative', bgcolor: 'background.default' }}>
         <HomeMinimal />
 
-        <HomeHugePackElements />
-
-        <HomeForDesigner />
-
-        <HomeHighlightFeatures />
-
         <HomeIntegrations />
 
         <HomePricing />
