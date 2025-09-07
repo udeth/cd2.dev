@@ -11,6 +11,9 @@ import { mainRoutes } from './main';
 import { authDemoRoutes } from './auth-demo';
 import { dashboardRoutes } from './dashboard';
 import { componentsRoutes } from './components';
+import { BlankView } from 'src/sections/blank/view';
+// Blank
+const BlankPage = lazy(() => import('src/pages/blank'));
 
 // ----------------------------------------------------------------------
 
@@ -28,6 +31,14 @@ export const routesSection: RouteObject[] = [
      * element: <Navigate to={CONFIG.auth.redirectPath} replace />,
      * and remove the element below:
      */
+    element: (
+      <Suspense fallback={<SplashScreen />}>
+        <BlankPage />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/demo',
     element: (
       <Suspense fallback={<SplashScreen />}>
         <MainLayout>
