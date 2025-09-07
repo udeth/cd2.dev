@@ -178,6 +178,7 @@ export function HomeFooter({ sx, ...other }: FooterProps) {
         <Box sx={{ mt: 1, typography: 'caption' }}>
           © All rights reserved.
           <br /> made by
+          <Iconify width={14} icon="solar:heart-bold" className="animate-pulse" sx={{mx: 0.3, mt: -0.3}} />
           <Link href="https://qiming.li/"> cd2.dev </Link>
         </Box>
       </Container>
