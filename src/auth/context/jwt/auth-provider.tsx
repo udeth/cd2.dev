@@ -31,7 +31,7 @@ export function AuthProvider({ children }: Props) {
       if (accessToken && isValidToken(accessToken)) {
         setSession(accessToken);
 
-        const res = await axios.get(endpoints.auth.me);
+        const res = await axios.post(endpoints.auth.me);
 
         const { user } = res.data;
 

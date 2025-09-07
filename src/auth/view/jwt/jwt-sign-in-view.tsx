@@ -50,8 +50,8 @@ export function JwtSignInView() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const defaultValues: SignInSchemaType = {
-    email: 'demo@minimals.cc',
-    password: '@2Minimal',
+    email: 'admin@qiming.li',
+    password: '00000000',
   };
 
   const methods = useForm<SignInSchemaType>({
