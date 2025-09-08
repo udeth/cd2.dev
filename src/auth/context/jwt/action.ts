@@ -13,8 +13,7 @@ export type SignInParams = {
 export type SignUpParams = {
   email: string;
   password: string;
-  firstName: string;
-  lastName: string;
+  nickname: string;
   code: string;
 };
 
@@ -46,15 +45,13 @@ export const signInWithPassword = async ({ email, password }: SignInParams): Pro
 export const signUp = async ({
   email,
   password,
-  firstName,
-  lastName,
+  nickname,
   code,
 }: SignUpParams): Promise<void> => {
   const params = {
     email,
     password,
-    firstName,
-    lastName,
+    nickname,
     code,
   };
 

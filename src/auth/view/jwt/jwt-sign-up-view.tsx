@@ -74,8 +74,7 @@ export function JwtSignUpView() {
       await signUp({
         email: data.email,
         password: data.password,
-        firstName: data.firstName,
-        lastName: data.lastName,
+        nickname: `${data.firstName} ${data.lastName}`,
         code: '016777',
       });
       await checkUserSession?.();
