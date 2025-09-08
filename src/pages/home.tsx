@@ -3,7 +3,7 @@ import { HomeView } from 'src/sections/home/view';
 // ----------------------------------------------------------------------
 
 const metadata = {
-  title: 'Build Worlds, Skip the <code>',
+  title: 'Build Worlds, Skip the <Code>',
   description:
     'Built on the newest version',
 };
