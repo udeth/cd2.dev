@@ -16,6 +16,7 @@ import { componentsRoutes } from './components';
 
 const HomePage = lazy(() => import('src/pages/home'));
 const Page404 = lazy(() => import('src/pages/error/404'));
+const DevelopPage = lazy(() => import('src/pages/develop'));
 
 export const routesSection: RouteObject[] = [
   {
@@ -36,7 +37,20 @@ export const routesSection: RouteObject[] = [
       </Suspense>
     ),
   },
-
+  {
+    path: '/develop',
+    /**
+     * @skip homepage
+     * import { Navigate } from "react-router";
+     * import { CONFIG } from 'src/global-config';
+     *
+     * element: <Navigate to={CONFIG.auth.redirectPath} replace />,
+     * and remove the element below:
+     */
+    element: (
+      <DevelopPage />
+    ),
+  },
   // Auth
   ...authRoutes,
   ...authDemoRoutes,

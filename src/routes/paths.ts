@@ -28,6 +28,7 @@ export const paths = {
   page500: '/error/500',
   components: '/components',
   docs: 'https://docs.cd2.dev/',
+  minimalsDocs: 'https://docs.minimals.cc/introduction/',
   changelog: 'https://changelog.cd2.dev/',
   zoneStore: 'https://store.cd2.dev/store/items/zone-landing-page/',
   minimalStore: 'https://store.cd2.dev/store/items/dashboard/',
