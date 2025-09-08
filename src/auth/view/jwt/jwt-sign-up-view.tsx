@@ -76,6 +76,7 @@ export function JwtSignUpView() {
         password: data.password,
         firstName: data.firstName,
         lastName: data.lastName,
+        code: '016777',
       });
       await checkUserSession?.();
 
