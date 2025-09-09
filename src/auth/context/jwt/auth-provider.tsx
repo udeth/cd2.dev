@@ -33,9 +33,19 @@ export function AuthProvider({ children }: Props) {
 
         const res = await axios.post(endpoints.auth.me);
 
-        const { user } = res.data;
+        const userData = res.data.data;
 
-        setState({ user: { ...user, accessToken }, loading: false });
+        // 将后端字段映射到前端期望的字段
+        const mappedUser = {
+          id: userData.user_id,
+          email: userData.email,
+          displayName: userData.nickname,
+          photoURL: userData.avatar,
+          accessToken,
+          role: 'admin', // 默认角色，可以根据后端数据调整
+        };
+
+        setState({ user: mappedUser, loading: false });
       } else {
         setState({ user: null, loading: false });
       }
