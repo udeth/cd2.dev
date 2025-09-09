@@ -17,6 +17,11 @@ export type SignUpParams = {
   code: string;
 };
 
+export type SendVerificationCodeParams = {
+  email: string;
+  scene: 'register' | 'login' | 'reset_password';
+};
+
 /** **************************************
  * Sign in
  *************************************** */
@@ -67,6 +72,27 @@ export const signUp = async ({
     sessionStorage.setItem(JWT_STORAGE_KEY, token);
   } catch (error) {
     console.error('Error during sign up:', error);
+    throw error;
+  }
+};
+
+/** **************************************
+ * Send verification code
+ *************************************** */
+export const sendVerificationCode = async ({
+  email,
+  scene,
+}: SendVerificationCodeParams): Promise<void> => {
+  try {
+    const params = { email, scene };
+    
+    const res = await axios.post(endpoints.auth.sendVerificationCode, params);
+    
+    if (!res.data) {
+      throw new Error('Failed to send verification code');
+    }
+  } catch (error) {
+    console.error('Error during sending verification code:', error);
     throw error;
   }
 };

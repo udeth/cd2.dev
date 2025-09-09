@@ -64,6 +64,7 @@ export const endpoints = {
     me: '/user/profile',
     signIn: '/auth/login',
     signUp: '/auth/register',
+    sendVerificationCode: 'https://api.idnyx.com/verify/send-code',
   },
   mail: {
     list: '/api/mail/list',

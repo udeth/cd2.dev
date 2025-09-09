@@ -1,5 +1,5 @@
 import { z as zod } from 'zod';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useBoolean } from 'minimal-shared/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -18,7 +18,7 @@ import { RouterLink } from 'src/routes/components';
 import { Iconify } from 'src/components/iconify';
 import { Form, Field } from 'src/components/hook-form';
 
-import { signUp } from '../../context/jwt';
+import { signUp, sendVerificationCode } from '../../context/jwt';
 import { useAuthContext } from '../../hooks';
 import { getErrorMessage } from '../../utils';
 import { FormHead } from '../../components/form-head';
@@ -39,6 +39,11 @@ export const SignUpSchema = zod.object({
     .string()
     .min(1, { message: 'Password is required!' })
     .min(6, { message: 'Password must be at least 6 characters!' }),
+  verificationCode: zod
+    .string()
+    .min(1, { message: 'Verification code is required!' })
+    .min(6, { message: 'Verification code must be 6 digits!' })
+    .max(6, { message: 'Verification code must be 6 digits!' }),
 });
 
 // ----------------------------------------------------------------------
@@ -51,12 +56,16 @@ export function JwtSignUpView() {
   const { checkUserSession } = useAuthContext();
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [sendingCode, setSendingCode] = useState(false);
+  const [countdown, setCountdown] = useState(0);
 
   const defaultValues: SignUpSchemaType = {
     firstName: 'Hello',
     lastName: 'Friend',
     email: 'hello@gmail.com',
     password: '00000000',
+    verificationCode: '',
   };
 
   const methods = useForm<SignUpSchemaType>({
@@ -66,16 +75,56 @@ export function JwtSignUpView() {
 
   const {
     handleSubmit,
+    watch,
     formState: { isSubmitting },
   } = methods;
 
+  const emailValue = watch('email');
+
+  // 倒计时逻辑
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (countdown > 0) {
+      timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [countdown]);
+
+  // 发送验证码
+  const handleSendVerificationCode = async () => {
+    if (!emailValue || sendingCode || countdown > 0) return;
+    
+    setSendingCode(true);
+    setErrorMessage(null);
+    setSuccessMessage(null);
+    
+    try {
+      await sendVerificationCode({
+        email: emailValue,
+        scene: 'register',
+      });
+      
+      setCountdown(60); // 60秒倒计时
+      setSuccessMessage(`验证码已发送至 ${emailValue}，请查收邮件`);
+    } catch (error) {
+      console.error('Send verification code error:', error);
+      const feedbackMessage = getErrorMessage(error);
+      setErrorMessage(feedbackMessage);
+    } finally {
+      setSendingCode(false);
+    }
+  };
+
   const onSubmit = handleSubmit(async (data) => {
     try {
+      setErrorMessage(null);
+      setSuccessMessage(null);
+      
       await signUp({
         email: data.email,
         password: data.password,
         nickname: `${data.firstName} ${data.lastName}`,
-        code: '016777',
+        code: data.verificationCode,
       });
       await checkUserSession?.();
 
@@ -104,7 +153,50 @@ export function JwtSignUpView() {
         />
       </Box>
 
-      <Field.Text name="email" label="Email address" slotProps={{ inputLabel: { shrink: true } }} />
+      <Field.Text 
+        name="email" 
+        label="Email address" 
+        slotProps={{ 
+          inputLabel: { shrink: true },
+          input: {
+            endAdornment: (
+              <InputAdornment position="end">
+                <Button
+                  size="small"
+                  onClick={handleSendVerificationCode}
+                  disabled={!emailValue || sendingCode || countdown > 0}
+                  loading={sendingCode}
+                  sx={{ minWidth: 'auto'}}
+                >
+                  {countdown > 0 ? `${countdown}s` : 'send'}
+                </Button>
+              </InputAdornment>
+            ),
+          },
+        }} 
+      />
+
+      <Field.Code 
+        name="verificationCode"
+        slotProps={{
+          wrapper: {
+            sx: {
+              width: '100%',
+              display: 'flex',
+              '& > div': {
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'space-between',
+                gap: 1.5,
+                '& .MuiTextField-root': {
+                  flex: 1,
+                  minWidth: 0,
+                },
+              },
+            },
+          },
+        }}
+      />
 
       <Field.Text
         name="password"
