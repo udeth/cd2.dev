@@ -29,7 +29,7 @@ const FAQs = [
       <Typography>
         You will get 12 months of free
         <Link
-          href="https://support.cd2.dev/hc/en-us/articles/360008775240-How-do-I-get-access-to-an-item-I-purchased"
+          href="https://cd2.dev/develop/support/hc/en-us/articles/360008775240-How-do-I-get-access-to-an-item-I-purchased"
           target="_blank"
           rel="noopener noreferrer"
           sx={{ mx: 0.5 }}
