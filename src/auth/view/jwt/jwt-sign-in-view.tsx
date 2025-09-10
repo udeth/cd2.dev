@@ -131,8 +131,8 @@ export function JwtSignInView() {
   );
 
   const renderSocialLogin = () => (
-    <Box sx={{ mt: 3 }}>
-      <Divider sx={{ mb: 3, color: 'text.disabled' }}>
+    <Box sx={{ mt: 2 }}>
+      <Divider sx={{ mb: 2, color: 'text.disabled' }}>
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
           Or sign in with
         </Typography>
