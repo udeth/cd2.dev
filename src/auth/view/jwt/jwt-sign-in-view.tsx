@@ -10,6 +10,8 @@ import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
+import Divider from '@mui/material/Divider';
+import Typography from '@mui/material/Typography';
 
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
@@ -128,6 +130,75 @@ export function JwtSignInView() {
     </Box>
   );
 
+  const renderSocialLogin = () => (
+    <Box sx={{ mt: 3 }}>
+      <Divider sx={{ mb: 3, color: 'text.disabled' }}>
+        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+          Or sign in with
+        </Typography>
+      </Divider>
+
+      <Box sx={{ gap: 2, display: 'flex', justifyContent: 'center' }}>
+        <IconButton
+          size="large"
+          onClick={() => {
+            // TODO: Implement Google login logic
+            console.log('Google login clicked');
+          }}
+          sx={{
+            width: 48,
+            height: 48,
+            border: '1px solid',
+            borderColor: 'divider',
+            '&:hover': {
+              borderColor: 'primary.main',
+            },
+          }}
+        >
+          <Iconify icon="socials:google" width={24} />
+        </IconButton>
+
+        <IconButton
+          size="large"
+          onClick={() => {
+            // TODO: Implement GitHub login logic
+            console.log('GitHub login clicked');
+          }}
+          sx={{
+            width: 48,
+            height: 48,
+            border: '1px solid',
+            borderColor: 'divider',
+            '&:hover': {
+              borderColor: 'primary.main',
+            },
+          }}
+        >
+          <Iconify icon="socials:github" width={24} />
+        </IconButton>
+
+        <IconButton
+          size="large"
+          onClick={() => {
+            // TODO: Implement Facebook login logic
+            console.log('Facebook login clicked');
+          }}
+          sx={{
+            width: 48,
+            height: 48,
+            border: '1px solid',
+            borderColor: 'divider',
+            '&:hover': {
+              borderColor: 'primary.main',
+            },
+          }}
+        >
+          <Iconify icon="socials:facebook" width={24} />
+        </IconButton>
+      </Box>
+    </Box>
+  );
+
   return (
     <>
       <FormHead
@@ -158,6 +229,8 @@ export function JwtSignInView() {
       <Form methods={methods} onSubmit={onSubmit}>
         {renderForm()}
       </Form>
+
+      {renderSocialLogin()}
     </>
   );
 }
