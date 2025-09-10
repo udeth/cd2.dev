@@ -33,6 +33,6 @@ export default defineConfig({
       },
     ],
   },
-  server: { port: PORT, host: true },
-  preview: { port: PORT, host: true },
+  server: { port: PORT, host: true, allowedHosts: ['pre.cd2.dev'] },
+  preview: { port: PORT, host: true, allowedHosts: ['pre.cd2.dev'] },
 });
