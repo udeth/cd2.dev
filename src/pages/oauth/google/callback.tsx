@@ -9,6 +9,19 @@ export default function GoogleOAuthCallbackPage() {
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
+    // 发送心跳信息给父窗口，表示窗口已加载
+    const sendHeartbeat = () => {
+      window.opener?.postMessage(
+        {
+          type: 'GOOGLE_AUTH_HEARTBEAT',
+        },
+        window.location.origin
+      );
+    };
+
+    // 立即发送一次心跳
+    sendHeartbeat();
+
     const handleCallback = () => {
       const code = searchParams.get('code');
       const error = searchParams.get('error');

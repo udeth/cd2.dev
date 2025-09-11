@@ -22,10 +22,6 @@ export type SendVerificationCodeParams = {
   scene: 'register' | 'login' | 'reset_password';
 };
 
-export type GoogleTokenParams = {
-  token: string;
-};
-
 /** **************************************
  * Sign in
  *************************************** */
@@ -136,8 +132,8 @@ export const signInWithGoogle = async (): Promise<void> => {
         }
 
         if (event.data.type === 'GOOGLE_AUTH_SUCCESS') {
-          window.removeEventListener('message', handleMessage);
-          popup.close();
+          cleanup();
+          // 不需要手动关闭弹出窗口，回调页面会自己关闭
           
           try {
             // 使用授权码换取token
@@ -148,22 +144,33 @@ export const signInWithGoogle = async (): Promise<void> => {
             reject(error);
           }
         } else if (event.data.type === 'GOOGLE_AUTH_ERROR') {
-          window.removeEventListener('message', handleMessage);
-          popup.close();
+          cleanup();
+          // 不需要手动关闭弹出窗口，回调页面会自己关闭
           reject(new Error(event.data.error || 'Google登录失败'));
+        } else if (event.data.type === 'GOOGLE_AUTH_HEARTBEAT') {
+          // 收到心跳消息，表示回调页面已加载，窗口仍然活跃
+          // 这里可以重置超时计时器或记录窗口状态
         }
       };
 
       window.addEventListener('message', handleMessage);
 
-      // 监听弹出窗口关闭
-      const checkClosed = setInterval(() => {
-        if (popup.closed) {
-          clearInterval(checkClosed);
-          window.removeEventListener('message', handleMessage);
-          reject(new Error('登录窗口被关闭'));
-        }
-      }, 1000);
+      // 注意：由于 Cross-Origin-Opener-Policy，我们避免直接检查 popup.closed
+      // 完全依赖消息事件和超时机制来处理窗口状态
+
+      // 添加超时机制，防止窗口检查失败时无限等待
+      const timeout = setTimeout(() => {
+        cleanup();
+        // 不尝试关闭弹出窗口，避免跨域错误
+        // 如果用户仍在授权流程中，窗口会自然关闭
+        reject(new Error('登录超时，请重试'));
+      }, 5 * 60 * 1000); // 5分钟超时
+
+      // 清理函数
+      const cleanup = () => {
+        clearTimeout(timeout);
+        window.removeEventListener('message', handleMessage);
+      };
     });
   } catch (error) {
     console.error('Error getting Google OAuth URL:', error);
