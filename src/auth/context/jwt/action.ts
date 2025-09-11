@@ -34,7 +34,7 @@ export const signInWithPassword = async ({ email, password }: SignInParams): Pro
     const { token } = res.data.data;
 
     if (!token) {
-      throw new Error('xAccess token not found in response');
+      throw new Error('Access token not found in response');
     }
 
     setSession(token);
@@ -120,7 +120,7 @@ export const signInWithGoogle = async (): Promise<void> => {
       );
 
       if (!popup) {
-        reject(new Error('弹出窗口被阻止，请允许弹出窗口并重试'));
+        reject(new Error('The pop-up window has been blocked. Please allow the pop-up window and try again.'));
         return;
       }
 
@@ -146,7 +146,7 @@ export const signInWithGoogle = async (): Promise<void> => {
         } else if (event.data.type === 'GOOGLE_AUTH_ERROR') {
           cleanup();
           // 不需要手动关闭弹出窗口，回调页面会自己关闭
-          reject(new Error(event.data.error || 'Google登录失败'));
+          reject(new Error(event.data.error || 'Google login failed'));
         } else if (event.data.type === 'GOOGLE_AUTH_HEARTBEAT') {
           // 收到心跳消息，表示回调页面已加载，窗口仍然活跃
           // 这里可以重置超时计时器或记录窗口状态
@@ -155,20 +155,33 @@ export const signInWithGoogle = async (): Promise<void> => {
 
       window.addEventListener('message', handleMessage);
 
-      // 注意：由于 Cross-Origin-Opener-Policy，我们避免直接检查 popup.closed
-      // 完全依赖消息事件和超时机制来处理窗口状态
+      // 检查弹出窗口是否被关闭
+      const checkClosed = setInterval(() => {
+        try {
+          if (popup.closed) {
+            cleanup();
+            clearInterval(checkClosed);
+            reject(new Error('The user cancelled the login.'));
+          }
+        } catch (error) {
+          // 在某些情况下，访问popup.closed可能会抛出错误
+          // 例如当弹出窗口跨域时，这里静默处理
+        }
+      }, 1000);
 
       // 添加超时机制，防止窗口检查失败时无限等待
       const timeout = setTimeout(() => {
         cleanup();
+        clearInterval(checkClosed);
         // 不尝试关闭弹出窗口，避免跨域错误
         // 如果用户仍在授权流程中，窗口会自然关闭
-        reject(new Error('登录超时，请重试'));
+        reject(new Error('Login timeout. Please try again.'));
       }, 5 * 60 * 1000); // 5分钟超时
 
       // 清理函数
       const cleanup = () => {
         clearTimeout(timeout);
+        clearInterval(checkClosed);
         window.removeEventListener('message', handleMessage);
       };
     });
