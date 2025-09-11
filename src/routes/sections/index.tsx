@@ -17,6 +17,7 @@ import { componentsRoutes } from './components';
 const HomePage = lazy(() => import('src/pages/home'));
 const Page404 = lazy(() => import('src/pages/error/404'));
 const DevelopPage = lazy(() => import('src/pages/develop'));
+const GoogleOAuthCallbackPage = lazy(() => import('src/pages/oauth/google/callback'));
 
 export const routesSection: RouteObject[] = [
   {
@@ -49,6 +50,15 @@ export const routesSection: RouteObject[] = [
      */
     element: (
       <DevelopPage />
+    ),
+  },
+  // OAuth callbacks
+  {
+    path: '/oauth/google/callback',
+    element: (
+      <Suspense fallback={<SplashScreen />}>
+        <GoogleOAuthCallbackPage />
+      </Suspense>
     ),
   },
   // Auth

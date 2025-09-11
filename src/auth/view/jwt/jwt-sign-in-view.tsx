@@ -23,7 +23,7 @@ import { Form, Field } from 'src/components/hook-form';
 import { useAuthContext } from '../../hooks';
 import { getErrorMessage } from '../../utils';
 import { FormHead } from '../../components/form-head';
-import { signInWithPassword } from '../../context/jwt';
+import { signInWithPassword, signInWithGoogle } from '../../context/jwt';
 
 // ----------------------------------------------------------------------
 
@@ -50,6 +50,7 @@ export function JwtSignInView() {
   const { checkUserSession } = useAuthContext();
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   const defaultValues: SignInSchemaType = {
     email: 'admin@qiming.li',
@@ -78,6 +79,24 @@ export function JwtSignInView() {
       setErrorMessage(feedbackMessage);
     }
   });
+
+  const handleGoogleSignIn = async () => {
+    try {
+      setIsGoogleLoading(true);
+      setErrorMessage(null);
+      
+      await signInWithGoogle();
+      await checkUserSession?.();
+      
+      router.refresh();
+    } catch (error) {
+      console.error('Google sign in error:', error);
+      const feedbackMessage = getErrorMessage(error);
+      setErrorMessage(feedbackMessage);
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  };
 
   const renderForm = () => (
     <Box sx={{ gap: 3, display: 'flex', flexDirection: 'column' }}>
@@ -141,10 +160,8 @@ export function JwtSignInView() {
       <Box sx={{ gap: 2, display: 'flex', justifyContent: 'center' }}>
         <IconButton
           size="large"
-          onClick={() => {
-            // TODO: Implement Google login logic
-            console.log('Google login clicked');
-          }}
+          onClick={handleGoogleSignIn}
+          disabled={isGoogleLoading || isSubmitting}
           sx={{
             width: 48,
             height: 48,
@@ -153,9 +170,30 @@ export function JwtSignInView() {
             '&:hover': {
               borderColor: 'primary.main',
             },
+            '&:disabled': {
+              opacity: 0.6,
+            },
           }}
         >
-          <Iconify icon="socials:google" width={24} />
+          {isGoogleLoading ? (
+            <Box
+              sx={{
+                width: 24,
+                height: 24,
+                border: '2px solid',
+                borderColor: 'divider',
+                borderTopColor: 'primary.main',
+                borderRadius: '50%',
+                animation: 'spin 1s linear infinite',
+                '@keyframes spin': {
+                  '0%': { transform: 'rotate(0deg)' },
+                  '100%': { transform: 'rotate(360deg)' },
+                },
+              }}
+            />
+          ) : (
+            <Iconify icon="socials:google" width={24} />
+          )}
         </IconButton>
 
         <IconButton

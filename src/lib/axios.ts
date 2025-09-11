@@ -8,6 +8,7 @@ import { CONFIG } from 'src/global-config';
 
 const axiosInstance = axios.create({
   baseURL: CONFIG.serverUrl,
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -64,7 +65,9 @@ export const endpoints = {
     me: '/user/profile',
     signIn: '/auth/login',
     signUp: '/auth/register',
-    sendVerificationCode: 'https://api.idnyx.com/verify/send-code',
+    googleSignIn: '/oauth/google/callback',
+    googleOAuth: '/oauth/google',
+    sendVerificationCode: '/verify/send-code',
   },
   mail: {
     list: '/api/mail/list',
