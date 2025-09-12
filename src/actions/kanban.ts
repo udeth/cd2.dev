@@ -22,7 +22,9 @@ const swrOptions: SWRConfiguration = {
 // ----------------------------------------------------------------------
 
 type BoardData = {
-  board: IKanban;
+  data: {
+    board: IKanban;
+  };
 };
 
 export function useGetBoard() {
@@ -31,8 +33,8 @@ export function useGetBoard() {
   });
 
   const memoizedValue = useMemo(() => {
-    const tasks = data?.board.tasks ?? {};
-    const columns = data?.board.columns ?? [];
+    const tasks = data?.data.board.tasks ?? {};
+    const columns = data?.data.board.columns ?? [];
 
     return {
       board: { tasks, columns },
@@ -41,7 +43,7 @@ export function useGetBoard() {
       boardValidating: isValidating,
       boardEmpty: !isLoading && !isValidating && !columns.length,
     };
-  }, [data?.board.columns, data?.board.tasks, error, isLoading, isValidating]);
+  }, [data?.data.board.columns, data?.data.board.tasks, error, isLoading, isValidating]);
 
   return memoizedValue;
 }

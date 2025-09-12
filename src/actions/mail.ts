@@ -18,7 +18,9 @@ const swrOptions: SWRConfiguration = {
 // ----------------------------------------------------------------------
 
 type LabelsData = {
-  labels: IMailLabel[];
+  data: {
+    labels: IMailLabel[];
+  };
 };
 
 export function useGetLabels() {
@@ -30,13 +32,13 @@ export function useGetLabels() {
 
   const memoizedValue = useMemo(
     () => ({
-      labels: data?.labels || [],
+      labels: data?.data.labels || [],
       labelsLoading: isLoading,
       labelsError: error,
       labelsValidating: isValidating,
-      labelsEmpty: !isLoading && !isValidating && !data?.labels.length,
+      labelsEmpty: !isLoading && !isValidating && !data?.data.labels.length,
     }),
-    [data?.labels, error, isLoading, isValidating]
+    [data?.data.labels, error, isLoading, isValidating]
   );
 
   return memoizedValue;
@@ -45,7 +47,9 @@ export function useGetLabels() {
 // ----------------------------------------------------------------------
 
 type MailsData = {
-  mails: IMail[];
+  data: {
+    mails: IMail[];
+  };
 };
 
 export function useGetMails(labelId: string) {
@@ -56,7 +60,7 @@ export function useGetMails(labelId: string) {
   });
 
   const memoizedValue = useMemo(() => {
-    const byId = data?.mails.length ? keyBy(data?.mails, (option) => option.id) : {};
+    const byId = data?.data.mails.length ? keyBy(data?.data.mails, (option) => option.id) : {};
     const allIds = Object.keys(byId);
 
     return {
@@ -66,7 +70,7 @@ export function useGetMails(labelId: string) {
       mailsValidating: isValidating,
       mailsEmpty: !isLoading && !isValidating && !allIds.length,
     };
-  }, [data?.mails, error, isLoading, isValidating]);
+  }, [data?.data.mails, error, isLoading, isValidating]);
 
   return memoizedValue;
 }
@@ -74,7 +78,9 @@ export function useGetMails(labelId: string) {
 // ----------------------------------------------------------------------
 
 type MailData = {
-  mail: IMail;
+  data: {
+    mail: IMail;
+  };
 };
 
 export function useGetMail(mailId: string) {
@@ -86,13 +92,13 @@ export function useGetMail(mailId: string) {
 
   const memoizedValue = useMemo(
     () => ({
-      mail: data?.mail,
+      mail: data?.data.mail,
       mailLoading: isLoading,
       mailError: error,
       mailValidating: isValidating,
-      mailEmpty: !isLoading && !isValidating && !data?.mail,
+      mailEmpty: !isLoading && !isValidating && !data?.data.mail,
     }),
-    [data?.mail, error, isLoading, isValidating]
+    [data?.data.mail, error, isLoading, isValidating]
   );
 
   return memoizedValue;

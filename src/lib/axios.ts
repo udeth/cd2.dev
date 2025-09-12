@@ -58,9 +58,9 @@ export const fetcher = async <T = unknown>(
 // ----------------------------------------------------------------------
 
 export const endpoints = {
-  chat: '/api/chat',
-  kanban: '/api/kanban',
-  calendar: '/api/calendar',
+  chat: '/mocker/chat-',
+  kanban: '/mocker/kanban.json',
+  calendar: '/mocker/calendar.json',
   auth: {
     me: '/user/profile',
     signIn: '/auth/login',
@@ -70,19 +70,19 @@ export const endpoints = {
     sendVerificationCode: '/verify/send-code',
   },
   mail: {
-    list: '/api/mail/list',
-    details: '/api/mail/details',
-    labels: '/api/mail/labels',
+    list: '/mocker/mail-list.json',
+    details: '/mocker/mail-details.json',
+    labels: '/mocker/mail-labels.json',
   },
   post: {
-    list: '/api/post/list',
-    details: '/api/post/details',
-    latest: '/api/post/latest',
-    search: '/api/post/search',
+    list: '/mocker/post-list.json',
+    details: '/mocker/post-details.json',
+    latest: '/mocker/post-latest.json',
+    search: '/mocker/post-search.json',
   },
   product: {
-    list: '/api/product/list',
-    details: '/api/product/details',
-    search: '/api/product/search',
+    list: '/mocker/product-list.json',
+    details: '/mocker/product-details.json',
+    search: '/mocker/product-search.json',
   },
 } as const;

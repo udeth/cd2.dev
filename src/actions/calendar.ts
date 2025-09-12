@@ -21,7 +21,9 @@ const swrOptions: SWRConfiguration = {
 // ----------------------------------------------------------------------
 
 type EventsData = {
-  events: ICalendarEvent[];
+  data: {
+    events: ICalendarEvent[];
+  };
 };
 
 export function useGetEvents() {
@@ -30,16 +32,16 @@ export function useGetEvents() {
   });
 
   const memoizedValue = useMemo(() => {
-    const events = data?.events.map((event) => ({ ...event, textColor: event.color }));
+    const events = data?.data.events.map((event) => ({ ...event, textColor: event.color }));
 
     return {
       events: events || [],
       eventsLoading: isLoading,
       eventsError: error,
       eventsValidating: isValidating,
-      eventsEmpty: !isLoading && !isValidating && !data?.events.length,
+      eventsEmpty: !isLoading && !isValidating && !data?.data.events.length,
     };
-  }, [data?.events, error, isLoading, isValidating]);
+  }, [data?.data.events, error, isLoading, isValidating]);
 
   return memoizedValue;
 }

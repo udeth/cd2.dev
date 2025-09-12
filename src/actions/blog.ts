@@ -17,7 +17,9 @@ const swrOptions: SWRConfiguration = {
 // ----------------------------------------------------------------------
 
 type PostsData = {
-  posts: IPostItem[];
+  data: {
+    posts: IPostItem[];
+  };
 };
 
 export function useGetPosts() {
@@ -29,13 +31,13 @@ export function useGetPosts() {
 
   const memoizedValue = useMemo(
     () => ({
-      posts: data?.posts || [],
+      posts: data?.data.posts || [],
       postsLoading: isLoading,
       postsError: error,
       postsValidating: isValidating,
-      postsEmpty: !isLoading && !data?.posts.length,
+      postsEmpty: !isLoading && !data?.data.posts.length,
     }),
-    [data?.posts, error, isLoading, isValidating]
+    [data?.data.posts, error, isLoading, isValidating]
   );
 
   return memoizedValue;
@@ -44,7 +46,9 @@ export function useGetPosts() {
 // ----------------------------------------------------------------------
 
 type PostData = {
-  post: IPostItem;
+  data: {
+    post: IPostItem;
+  };
 };
 
 export function useGetPost(title: string) {
@@ -56,12 +60,12 @@ export function useGetPost(title: string) {
 
   const memoizedValue = useMemo(
     () => ({
-      post: data?.post,
+      post: data?.data.post,
       postLoading: isLoading,
       postError: error,
       postValidating: isValidating,
     }),
-    [data?.post, error, isLoading, isValidating]
+    [data?.data.post, error, isLoading, isValidating]
   );
 
   return memoizedValue;
@@ -70,7 +74,9 @@ export function useGetPost(title: string) {
 // ----------------------------------------------------------------------
 
 type LatestPostsData = {
-  latestPosts: IPostItem[];
+  data: {
+    latestPosts: IPostItem[];
+  };
 };
 
 export function useGetLatestPosts(title: string) {
@@ -82,13 +88,13 @@ export function useGetLatestPosts(title: string) {
 
   const memoizedValue = useMemo(
     () => ({
-      latestPosts: data?.latestPosts || [],
+      latestPosts: data?.data.latestPosts || [],
       latestPostsLoading: isLoading,
       latestPostsError: error,
       latestPostsValidating: isValidating,
-      latestPostsEmpty: !isLoading && !data?.latestPosts.length,
+      latestPostsEmpty: !isLoading && !data?.data.latestPosts.length,
     }),
-    [data?.latestPosts, error, isLoading, isValidating]
+    [data?.data.latestPosts, error, isLoading, isValidating]
   );
 
   return memoizedValue;
@@ -97,7 +103,9 @@ export function useGetLatestPosts(title: string) {
 // ----------------------------------------------------------------------
 
 type SearchResultsData = {
-  results: IPostItem[];
+  data: {
+    results: IPostItem[];
+  };
 };
 
 export function useSearchPosts(query: string) {
@@ -110,13 +118,13 @@ export function useSearchPosts(query: string) {
 
   const memoizedValue = useMemo(
     () => ({
-      searchResults: data?.results || [],
+      searchResults: data?.data.results || [],
       searchLoading: isLoading,
       searchError: error,
       searchValidating: isValidating,
-      searchEmpty: !isLoading && !isValidating && !data?.results.length,
+      searchEmpty: !isLoading && !isValidating && !data?.data.results.length,
     }),
-    [data?.results, error, isLoading, isValidating]
+    [data?.data.results, error, isLoading, isValidating]
   );
 
   return memoizedValue;

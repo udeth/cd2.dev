@@ -22,11 +22,13 @@ const swrOptions: SWRConfiguration = {
 // ----------------------------------------------------------------------
 
 type ContactsData = {
-  contacts: IChatParticipant[];
+  data: {
+    contacts: IChatParticipant[];
+  };
 };
 
 export function useGetContacts() {
-  const url = [CHAT_ENDPOINT, { params: { endpoint: 'contacts' } }];
+  const url = [CHAT_ENDPOINT + 'endpoint-contacts.json', { params: { endpoint: 'contacts' } }];
 
   const { data, isLoading, error, isValidating } = useSWR<ContactsData>(url, fetcher, {
     ...swrOptions,
@@ -34,13 +36,13 @@ export function useGetContacts() {
 
   const memoizedValue = useMemo(
     () => ({
-      contacts: data?.contacts || [],
+      contacts: data?.data.contacts || [],
       contactsLoading: isLoading,
       contactsError: error,
       contactsValidating: isValidating,
-      contactsEmpty: !isLoading && !isValidating && !data?.contacts.length,
+      contactsEmpty: !isLoading && !isValidating && !data?.data.contacts.length,
     }),
-    [data?.contacts, error, isLoading, isValidating]
+    [data?.data.contacts, error, isLoading, isValidating]
   );
 
   return memoizedValue;
@@ -49,18 +51,20 @@ export function useGetContacts() {
 // ----------------------------------------------------------------------
 
 type ConversationsData = {
-  conversations: IChatConversation[];
+  data: {
+    conversations: IChatConversation[];
+  };
 };
 
 export function useGetConversations() {
-  const url = [CHAT_ENDPOINT, { params: { endpoint: 'conversations' } }];
+  const url = [CHAT_ENDPOINT + 'endpoint-conversations.json', { params: { endpoint: 'conversations' } }];
 
   const { data, isLoading, error, isValidating } = useSWR<ConversationsData>(url, fetcher, {
     ...swrOptions,
   });
 
   const memoizedValue = useMemo(() => {
-    const byId = data?.conversations.length ? keyBy(data.conversations, (option) => option.id) : {};
+    const byId = data?.data.conversations.length ? keyBy(data.data.conversations, (option) => option.id) : {};
     const allIds = Object.keys(byId);
 
     return {
@@ -70,7 +74,7 @@ export function useGetConversations() {
       conversationsValidating: isValidating,
       conversationsEmpty: !isLoading && !isValidating && !allIds.length,
     };
-  }, [data?.conversations, error, isLoading, isValidating]);
+  }, [data?.data.conversations, error, isLoading, isValidating]);
 
   return memoizedValue;
 }
@@ -78,12 +82,14 @@ export function useGetConversations() {
 // ----------------------------------------------------------------------
 
 type ConversationData = {
-  conversation: IChatConversation;
+  data: {
+    conversation: IChatConversation;
+  };
 };
 
 export function useGetConversation(conversationId: string) {
   const url = conversationId
-    ? [CHAT_ENDPOINT, { params: { conversationId: `${conversationId}`, endpoint: 'conversation' } }]
+    ? [CHAT_ENDPOINT + 'endpoint-conversationId.json', { params: { conversationId: `${conversationId}`, endpoint: 'conversation' } }]
     : '';
 
   const { data, isLoading, error, isValidating } = useSWR<ConversationData>(url, fetcher, {
@@ -92,13 +98,13 @@ export function useGetConversation(conversationId: string) {
 
   const memoizedValue = useMemo(
     () => ({
-      conversation: data?.conversation,
+      conversation: data?.data.conversation,
       conversationLoading: isLoading,
       conversationError: error,
       conversationValidating: isValidating,
-      conversationEmpty: !isLoading && !isValidating && !data?.conversation,
+      conversationEmpty: !isLoading && !isValidating && !data?.data.conversation,
     }),
-    [data?.conversation, error, isLoading, isValidating]
+    [data?.data.conversation, error, isLoading, isValidating]
   );
 
   return memoizedValue;

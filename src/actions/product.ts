@@ -17,7 +17,9 @@ const swrOptions: SWRConfiguration = {
 // ----------------------------------------------------------------------
 
 type ProductsData = {
-  products: IProductItem[];
+  data: {
+    products: IProductItem[];
+  };
 };
 
 export function useGetProducts() {
@@ -29,13 +31,13 @@ export function useGetProducts() {
 
   const memoizedValue = useMemo(
     () => ({
-      products: data?.products || [],
+      products: data?.data.products || [],
       productsLoading: isLoading,
       productsError: error,
       productsValidating: isValidating,
-      productsEmpty: !isLoading && !isValidating && !data?.products.length,
+      productsEmpty: !isLoading && !isValidating && !data?.data.products.length,
     }),
-    [data?.products, error, isLoading, isValidating]
+    [data?.data.products, error, isLoading, isValidating]
   );
 
   return memoizedValue;
@@ -44,7 +46,9 @@ export function useGetProducts() {
 // ----------------------------------------------------------------------
 
 type ProductData = {
-  product: IProductItem;
+  data: {
+    product: IProductItem;
+  };
 };
 
 export function useGetProduct(productId: string) {
@@ -56,12 +60,12 @@ export function useGetProduct(productId: string) {
 
   const memoizedValue = useMemo(
     () => ({
-      product: data?.product,
+      product: data?.data.product,
       productLoading: isLoading,
       productError: error,
       productValidating: isValidating,
     }),
-    [data?.product, error, isLoading, isValidating]
+    [data?.data.product, error, isLoading, isValidating]
   );
 
   return memoizedValue;
