@@ -64,8 +64,9 @@ export async function createColumn(columnData: IKanbanColumn) {
    */
   mutate(
     KANBAN_ENDPOINT,
-    (currentData) => {
-      const { board } = currentData as BoardData;
+    (currentData: BoardData | undefined) => {
+      if (!currentData) return currentData;
+      const board = currentData.data.board;
 
       // add new column in board.columns
       const columns = [...board.columns, columnData];
@@ -73,7 +74,7 @@ export async function createColumn(columnData: IKanbanColumn) {
       // add new task in board.tasks
       const tasks = { ...board.tasks, [columnData.id]: [] };
 
-      return { ...currentData, board: { ...board, columns, tasks } };
+      return { ...currentData, data: { ...currentData.data, board: { ...board, columns, tasks } } };
     },
     false
   );
@@ -96,8 +97,9 @@ export async function updateColumn(columnId: UniqueIdentifier, columnName: strin
   startTransition(() => {
     mutate(
       KANBAN_ENDPOINT,
-      (currentData) => {
-        const { board } = currentData as BoardData;
+      (currentData: BoardData | undefined) => {
+        if (!currentData) return currentData;
+        const board = currentData.data.board;
 
         const columns = board.columns.map((column) =>
           column.id === columnId
@@ -109,7 +111,7 @@ export async function updateColumn(columnId: UniqueIdentifier, columnName: strin
             : column
         );
 
-        return { ...currentData, board: { ...board, columns } };
+        return { ...currentData, data: { ...currentData.data, board: { ...board, columns } } };
       },
       false
     );
@@ -125,10 +127,11 @@ export async function moveColumn(updateColumns: IKanbanColumn[]) {
   startTransition(() => {
     mutate(
       KANBAN_ENDPOINT,
-      (currentData) => {
-        const { board } = currentData as BoardData;
+      (currentData: BoardData | undefined) => {
+        if (!currentData) return currentData;
+        const board = currentData.data.board;
 
-        return { ...currentData, board: { ...board, columns: updateColumns } };
+        return { ...currentData, data: { ...currentData.data, board: { ...board, columns: updateColumns } } };
       },
       false
     );
@@ -160,13 +163,14 @@ export async function clearColumn(columnId: UniqueIdentifier) {
   startTransition(() => {
     mutate(
       KANBAN_ENDPOINT,
-      (currentData) => {
-        const { board } = currentData as BoardData;
+      (currentData: BoardData | undefined) => {
+        if (!currentData) return currentData;
+        const board = currentData.data.board;
 
         // remove all tasks in column
         const tasks = { ...board.tasks, [columnId]: [] };
 
-        return { ...currentData, board: { ...board, tasks } };
+        return { ...currentData, data: { ...currentData.data, board: { ...board, tasks } } };
       },
       false
     );
@@ -189,8 +193,9 @@ export async function deleteColumn(columnId: UniqueIdentifier) {
    */
   mutate(
     KANBAN_ENDPOINT,
-    (currentData) => {
-      const { board } = currentData as BoardData;
+    (currentData: BoardData | undefined) => {
+      if (!currentData) return currentData;
+      const board = currentData.data.board;
 
       // delete column in board.columns
       const columns = board.columns.filter((column) => column.id !== columnId);
@@ -203,7 +208,7 @@ export async function deleteColumn(columnId: UniqueIdentifier) {
           return obj;
         }, {});
 
-      return { ...currentData, board: { ...board, columns, tasks } };
+      return { ...currentData, data: { ...currentData.data, board: { ...board, columns, tasks } } };
     },
     false
   );
@@ -226,13 +231,14 @@ export async function createTask(columnId: UniqueIdentifier, taskData: IKanbanTa
   startTransition(() => {
     mutate(
       KANBAN_ENDPOINT,
-      (currentData) => {
-        const { board } = currentData as BoardData;
+      (currentData: BoardData | undefined) => {
+        if (!currentData) return currentData;
+        const board = currentData.data.board;
 
         // add task in board.tasks
         const tasks = { ...board.tasks, [columnId]: [taskData, ...board.tasks[columnId]] };
 
-        return { ...currentData, board: { ...board, tasks } };
+        return { ...currentData, data: { ...currentData.data, board: { ...board, tasks } } };
       },
       false
     );
@@ -256,8 +262,9 @@ export async function updateTask(columnId: UniqueIdentifier, taskData: IKanbanTa
   startTransition(() => {
     mutate(
       KANBAN_ENDPOINT,
-      (currentData) => {
-        const { board } = currentData as BoardData;
+      (currentData: BoardData | undefined) => {
+        if (!currentData) return currentData;
+        const board = currentData.data.board;
 
         // tasks in column
         const tasksInColumn = board.tasks[columnId];
@@ -275,7 +282,7 @@ export async function updateTask(columnId: UniqueIdentifier, taskData: IKanbanTa
 
         const tasks = { ...board.tasks, [columnId]: updateTasks };
 
-        return { ...currentData, board: { ...board, tasks } };
+        return { ...currentData, data: { ...currentData.data, board: { ...board, tasks } } };
       },
       false
     );
@@ -291,13 +298,14 @@ export async function moveTask(updateTasks: IKanban['tasks']) {
   startTransition(() => {
     mutate(
       KANBAN_ENDPOINT,
-      (currentData) => {
-        const { board } = currentData as BoardData;
+      (currentData: BoardData | undefined) => {
+        if (!currentData) return currentData;
+        const board = currentData.data.board;
 
         // update board.tasks
         const tasks = updateTasks;
 
-        return { ...currentData, board: { ...board, tasks } };
+        return { ...currentData, data: { ...currentData.data, board: { ...board, tasks } } };
       },
       false
     );
@@ -328,8 +336,9 @@ export async function deleteTask(columnId: UniqueIdentifier, taskId: UniqueIdent
    */
   mutate(
     KANBAN_ENDPOINT,
-    (currentData) => {
-      const { board } = currentData as BoardData;
+    (currentData: BoardData | undefined) => {
+      if (!currentData) return currentData;
+      const board = currentData.data.board;
 
       // delete task in column
       const tasks = {
