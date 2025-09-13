@@ -178,7 +178,7 @@ export function HomeFooter({ sx, ...other }: FooterProps) {
           © All rights reserved.
           <br /> made by
           <Iconify width={14} icon="solar:heart-bold" className="animate-pulse" sx={{mx: 0.3, mt: -0.3}} />
-          <Link href="https://qiming.li/"> cd2 /qiming.li </Link>
+          <Link href="https://qiming.li/"> cd /qiming.li </Link>
         </Box>
       </Container>
     </FooterRoot>
