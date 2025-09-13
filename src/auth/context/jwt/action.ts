@@ -1,5 +1,3 @@
-import axios, { endpoints } from 'src/lib/axios';
-
 import { setSession } from './utils';
 import { JWT_STORAGE_KEY } from './constant';
 import type {
@@ -8,6 +6,7 @@ import type {
   SendVerificationCodeRequest,
   SignInWithGoogleCodeRequest
 } from "../../../types/auth";
+import * as authApi from 'src/actions/auth';
 
 // ----------------------------------------------------------------------
 
@@ -16,13 +15,7 @@ import type {
  *************************************** */
 export const signInWithPassword = async (params: SignInRequest): Promise<void> => {
   try {
-    const res = await axios.post(endpoints.auth.signIn, params);
-    const { token } = res.data.data;
-
-    if (!token) {
-      throw new Error('Access token not found in response');
-    }
-
+    const { token } = await authApi.signInWithPassword(params);
     setSession(token);
   } catch (error) {
     console.error('Error during sign in:', error);
@@ -35,13 +28,7 @@ export const signInWithPassword = async (params: SignInRequest): Promise<void> =
  *************************************** */
 export const signUp = async (req: SignUpRequest): Promise<void> => {
   try {
-    const res = await axios.post(endpoints.auth.signUp, req);
-    const { token } = res.data.data;
-
-    if (!token) {
-      throw new Error('Access token not found in response');
-    }
-
+    const { token } = await authApi.signUp(req);
     sessionStorage.setItem(JWT_STORAGE_KEY, token);
   } catch (error) {
     console.error('Error during sign up:', error);
@@ -54,11 +41,7 @@ export const signUp = async (req: SignUpRequest): Promise<void> => {
  *************************************** */
 export const sendVerificationCode = async (req: SendVerificationCodeRequest): Promise<void> => {
   try {
-    const res = await axios.post(endpoints.auth.sendVerificationCode, req);
-
-    if (!res.data) {
-      throw new Error('Failed to send verification code');
-    }
+    await authApi.sendVerificationCode(req);
   } catch (error) {
     console.error('Error during sending verification code:', error);
     throw error;
@@ -71,13 +54,7 @@ export const sendVerificationCode = async (req: SendVerificationCodeRequest): Pr
 export const signInWithGoogle = async (): Promise<void> => {
   try {
     // 从服务端获取 Google OAuth URL
-    const res = await axios.post(endpoints.auth.googleOAuth);
-
-    const { auth_url } = res.data.data;
-
-    if (!auth_url) {
-      throw new Error('Failed to get Google OAuth URL from server');
-    }
+    const { auth_url } = await authApi.getGoogleOAuthUrl();
 
     return new Promise((resolve, reject) => {
       // 打开弹出窗口
@@ -164,14 +141,7 @@ export const signInWithGoogle = async (): Promise<void> => {
  *************************************** */
 export const signInWithGoogleCode = async (req: SignInWithGoogleCodeRequest): Promise<void> => {
   try {
-    const res = await axios.post(endpoints.auth.googleSignIn, req);
-
-    const { access_token } = res.data.data;
-
-    if (!access_token) {
-      throw new Error('Access token not found in response');
-    }
-
+    const { access_token } = await authApi.signInWithGoogleCode(req);
     setSession(access_token);
   } catch (error) {
     console.error('Error during Google sign in:', error);
