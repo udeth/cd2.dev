@@ -33,7 +33,7 @@ export const paths = {
   zoneStore: 'https://cd2.dev/develop/store/items/zone-landing-page/',
   minimalStore: 'https://cd2.dev/develop/store/items/dashboard/',
   freeUI: 'https://cd2.dev/develop/store/items/dashboard-free/',
-  figmaUrl: 'https://cd2.dev/develop/figma/design/WadcoP3CSejUDj7YZc87xj-Web.v7.3.0',
+  figmaUrl: 'https://cd2.dev/develop/down/design/WadcoP3CSejUDj7YZc87xj-App.v7.3.0',
   product: {
     root: `/product`,
     checkout: `/product/checkout`,

@@ -221,7 +221,7 @@ export function HomeHero({ sx, ...other }: BoxProps) {
           startIcon={<Iconify width={24} icon="solar:figma-outline" />}
           sx={{ height: 52, borderColor: 'currentColor' }}
         >
-          Subscription
+          Download
         </Button>
       </m.div>
     </Box>
