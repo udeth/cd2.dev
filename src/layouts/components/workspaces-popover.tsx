@@ -18,6 +18,7 @@ import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 import { CustomPopover } from 'src/components/custom-popover';
+import { WorkspaceCreateDialog } from 'src/components/workspace-create-dialog';
 
 // ----------------------------------------------------------------------
 
@@ -30,14 +31,16 @@ export type WorkspacesPopoverProps = ButtonBaseProps & {
     is_default?: boolean;
   }[];
   loading?: boolean;
+  onWorkspaceCreated?: () => void;
 };
 
-export function WorkspacesPopover({ data = [], loading = false, sx, ...other }: WorkspacesPopoverProps) {
+export function WorkspacesPopover({ data = [], loading = false, onWorkspaceCreated, sx, ...other }: WorkspacesPopoverProps) {
   const mediaQuery = 'sm';
 
   const { open, anchorEl, onClose, onOpen } = usePopover();
 
   const [workspace, setWorkspace] = useState(data[0]);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
   // 监听 data 变化，当数据更新时同步更新当前选中的工作区
   useEffect(() => {
@@ -58,6 +61,16 @@ export function WorkspacesPopover({ data = [], loading = false, sx, ...other }: 
     },
     [onClose]
   );
+
+  const handleCreateWorkspace = useCallback(() => {
+    setCreateDialogOpen(true);
+    onClose();
+  }, [onClose]);
+
+  const handleWorkspaceCreated = useCallback(() => {
+    setCreateDialogOpen(false);
+    onWorkspaceCreated?.();
+  }, [onWorkspaceCreated]);
 
   const buttonBg: SxProps<Theme> = {
     height: 1,
@@ -109,7 +122,7 @@ export function WorkspacesPopover({ data = [], loading = false, sx, ...other }: 
             variant="text"
             width={80}
             height={20}
-            sx={{ 
+            sx={{
               display: { xs: 'none', [mediaQuery]: 'block' },
               bgcolor: 'action.hover'
             }}
@@ -120,7 +133,7 @@ export function WorkspacesPopover({ data = [], loading = false, sx, ...other }: 
             variant="rectangular"
             width={40}
             height={22}
-            sx={{ 
+            sx={{
               borderRadius: 0.75,
               display: { xs: 'none', [mediaQuery]: 'block' },
               bgcolor: 'action.hover'
@@ -251,9 +264,7 @@ export function WorkspacesPopover({ data = [], loading = false, sx, ...other }: 
         fullWidth
         disabled={loading && data.length === 0}
         startIcon={<Iconify width={18} icon="mingcute:add-line" />}
-        onClick={() => {
-          onClose();
-        }}
+        onClick={handleCreateWorkspace}
         sx={{
           gap: 2,
           justifyContent: 'flex-start',
@@ -277,6 +288,11 @@ export function WorkspacesPopover({ data = [], loading = false, sx, ...other }: 
     <>
       {renderButton()}
       {renderMenuList()}
+      <WorkspaceCreateDialog
+        open={createDialogOpen}
+        onClose={() => setCreateDialogOpen(false)}
+        onSuccess={handleWorkspaceCreated}
+      />
     </>
   );
 }
