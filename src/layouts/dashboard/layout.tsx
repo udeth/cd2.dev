@@ -64,7 +64,7 @@ export function DashboardLayout({
 
   const settings = useSettingsContext();
 
-  const { workspaces } = useWorkspaces();
+  const { workspaces, loading: workspacesLoading } = useWorkspaces();
 
   const navVars = dashboardNavColorVars(theme, settings.state.navColor, settings.state.navLayout);
 
@@ -141,6 +141,7 @@ export function DashboardLayout({
           {/** @slot Workspace popover */}
           <WorkspacesPopover
             data={workspaces}
+            loading={workspacesLoading}
             sx={{ ...(isNavHorizontal && { color: 'var(--layout-nav-text-primary-color)' }) }}
           />
         </>

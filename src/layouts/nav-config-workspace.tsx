@@ -14,18 +14,21 @@ const _workspaces: WorkspacesPopoverProps['data'] = [
     name: 'Space 1',
     plan: 'Free',
     logo: `${CONFIG.assetsDir}/assets/icons/workspaces/logo-1.webp`,
+    is_default: true,
   },
   {
     id: '2',
     name: 'Space 2',
     plan: 'Pro',
     logo: `${CONFIG.assetsDir}/assets/icons/workspaces/logo-2.webp`,
+    is_default: false,
   },
   {
     id: '3',
     name: 'Space 3',
     plan: 'Pro',
     logo: `${CONFIG.assetsDir}/assets/icons/workspaces/logo-3.webp`,
+    is_default: false,
   },
 ];
 
@@ -35,12 +38,13 @@ const transformWorkspaceData = (workspaces: WorkspaceInfo[]): NonNullable<Worksp
     name: workspace.name,
     plan: workspace.plan,
     logo: workspace.logo || `${CONFIG.assetsDir}/assets/icons/workspaces/logo-default.webp`,
+    is_default: workspace.is_default, // 保留默认工作区标识
   }));
 
 // Hook for managing workspace data
 export const useWorkspaces = () => {
-  const [workspaces, setWorkspaces] = useState<NonNullable<WorkspacesPopoverProps['data']>>(_workspaces);
-  const [loading, setLoading] = useState(false);
+  const [workspaces, setWorkspaces] = useState<NonNullable<WorkspacesPopoverProps['data']>>([]);
+  const [loading, setLoading] = useState(true); // 初始状态为加载中
   const [error, setError] = useState<string | null>(null);
 
   const loadWorkspaces = useCallback(async () => {
@@ -54,12 +58,13 @@ export const useWorkspaces = () => {
       if (transformedData.length > 0) {
         setWorkspaces(transformedData);
       } else {
+        // 如果没有数据，使用默认数据作为备选
         setWorkspaces(_workspaces);
       }
     } catch (err) {
       console.error('Failed to load workspaces:', err);
       setError(err instanceof Error ? err.message : 'Failed to load workspaces');
-      // 发生错误时保持使用默认数据
+      // 发生错误时使用默认数据作为备选
       setWorkspaces(_workspaces);
     } finally {
       setLoading(false);
