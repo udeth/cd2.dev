@@ -7,6 +7,7 @@ import type {
 } from 'src/types/api/workspace';
 import type { Response } from '../types/response';
 import { _workspacesMock } from '../_mock';
+import { CONFIG } from 'src/global-config';
 
 // ----------------------------------------------------------------------
 
@@ -70,6 +71,21 @@ export const createWorkspace = async (params: CreateWorkspaceRequest): Promise<C
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
+
+    // 如果新工作区设为默认，需要将其他工作区的默认状态取消
+    if (params.is_default) {
+      _workspacesMock.forEach(workspace => {
+        workspace.is_default = false;
+      });
+    }
+
+    // 将新创建的工作区添加到模拟数据中
+    const newWorkspace = {
+      ...mockResponse,
+      plan: 'Free', // 新工作区默认为免费计划
+      logo: `${CONFIG.assetsDir}/assets/icons/workspaces/logo-1.webp`, // 默认logo
+    };
+    _workspacesMock.push(newWorkspace);
 
     // 在生产环境中，应该抛出错误而不是返回模拟数据
     // throw error;
