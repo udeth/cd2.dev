@@ -23,6 +23,7 @@ import { useAuthContext } from '../../hooks';
 import { getErrorMessage } from '../../utils';
 import { FormHead } from '../../components/form-head';
 import { SignUpTerms } from '../../components/sign-up-terms';
+import {SendVerificationCodeRequest, SignUpRequest} from "../../../types/auth";
 
 // ----------------------------------------------------------------------
 
@@ -93,17 +94,15 @@ export function JwtSignUpView() {
   // 发送验证码
   const handleSendVerificationCode = async () => {
     if (!emailValue || sendingCode || countdown > 0) return;
-    
+
     setSendingCode(true);
     setErrorMessage(null);
     setSuccessMessage(null);
-    
+
     try {
-      await sendVerificationCode({
-        email: emailValue,
-        scene: 'register',
-      });
-      
+      const params: SendVerificationCodeRequest = { email: emailValue, scene: 'register' };
+      await sendVerificationCode(params);
+
       setCountdown(60); // 60秒倒计时
       setSuccessMessage(`验证码已发送至 ${emailValue}，请查收邮件`);
     } catch (error) {
@@ -119,13 +118,9 @@ export function JwtSignUpView() {
     try {
       setErrorMessage(null);
       setSuccessMessage(null);
-      
-      await signUp({
-        email: data.email,
-        password: data.password,
-        nickname: `${data.firstName} ${data.lastName}`,
-        code: data.verificationCode,
-      });
+
+      const params: SignUpRequest = { email: data.email, password: data.password, nickname: `${data.firstName} ${data.lastName}`, code: data.verificationCode };
+      await signUp(params);
       await checkUserSession?.();
 
       router.refresh();
@@ -153,10 +148,10 @@ export function JwtSignUpView() {
         />
       </Box>
 
-      <Field.Text 
-        name="email" 
-        label="Email address" 
-        slotProps={{ 
+      <Field.Text
+        name="email"
+        label="Email address"
+        slotProps={{
           inputLabel: { shrink: true },
           input: {
             endAdornment: (
@@ -173,10 +168,10 @@ export function JwtSignUpView() {
               </InputAdornment>
             ),
           },
-        }} 
+        }}
       />
 
-      <Field.Code 
+      <Field.Code
         name="verificationCode"
         slotProps={{
           wrapper: {

@@ -46,7 +46,7 @@ export const fetcher = async <T = unknown>(
   try {
     const [url, config] = Array.isArray(args) ? args : [args, {}];
 
-    const res = await axiosInstance.get<T>(url, config);
+    const res = await axiosInstance.post<T>(url, config);
 
     return res.data;
   } catch (error) {
@@ -62,12 +62,12 @@ export const endpoints = {
   kanban: '/mocker/kanban.json',
   calendar: '/mocker/calendar.json',
   auth: {
-    me: '/user/profile',
+    sendVerificationCode: '/verify/send-code',
     signIn: '/auth/login',
     signUp: '/auth/register',
-    googleSignIn: '/oauth/google/callback',
+    me: '/user/profile',
     googleOAuth: '/oauth/google',
-    sendVerificationCode: '/verify/send-code',
+    googleSignIn: '/oauth/google/callback',
   },
   mail: {
     list: '/mocker/mail-list.json',
@@ -85,4 +85,7 @@ export const endpoints = {
     details: '/mocker/product-details.json',
     search: '/mocker/product-search.json',
   },
+  workspace: {
+    list: '/workspace/list',
+  }
 } as const;

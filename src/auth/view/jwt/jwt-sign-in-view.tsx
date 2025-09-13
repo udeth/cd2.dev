@@ -23,7 +23,8 @@ import { Form, Field } from 'src/components/hook-form';
 import { useAuthContext } from '../../hooks';
 import { getErrorMessage } from '../../utils';
 import { FormHead } from '../../components/form-head';
-import { signInWithPassword, signInWithGoogle } from '../../context/jwt';
+import { signInWithGoogle, signInWithPassword } from '../../context/jwt';
+import {SignInRequest} from "../../../types/auth";
 
 // ----------------------------------------------------------------------
 
@@ -69,7 +70,8 @@ export function JwtSignInView() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await signInWithPassword({ email: data.email, password: data.password });
+      const params: SignInRequest = { email: data.email, password: data.password };
+      await signInWithPassword(params);
       await checkUserSession?.();
 
       router.refresh();
@@ -84,10 +86,10 @@ export function JwtSignInView() {
     try {
       setIsGoogleLoading(true);
       setErrorMessage(null);
-      
+
       await signInWithGoogle();
       await checkUserSession?.();
-      
+
       router.refresh();
     } catch (error) {
       console.error('Google sign in error:', error);
