@@ -153,7 +153,21 @@ export function JwtSignUpView() {
         label="Email address"
         slotProps={{
           inputLabel: { shrink: true },
+        }}
+      />
+
+      <Field.Text
+        name="verificationCode"
+        label="Verification code"
+        placeholder="6-digit code"
+        slotProps={{
+          inputLabel: { shrink: true },
           input: {
+            inputProps: {
+              maxLength: 6,
+              pattern: '[0-9]*',
+              inputMode: 'numeric',
+            },
             endAdornment: (
               <InputAdornment position="end">
                 <Button
@@ -167,28 +181,6 @@ export function JwtSignUpView() {
                 </Button>
               </InputAdornment>
             ),
-          },
-        }}
-      />
-
-      <Field.Code
-        name="verificationCode"
-        slotProps={{
-          wrapper: {
-            sx: {
-              width: '100%',
-              display: 'flex',
-              '& > div': {
-                width: '100%',
-                display: 'flex',
-                justifyContent: 'space-between',
-                gap: 1.5,
-                '& .MuiTextField-root': {
-                  flex: 1,
-                  minWidth: 0,
-                },
-              },
-            },
           },
         }}
       />
