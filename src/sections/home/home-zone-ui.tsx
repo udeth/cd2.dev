@@ -52,8 +52,8 @@ export function HomeZoneUI({ sx, ...other }: BoxProps) {
   const renderDescription = () => (
     <SectionTitle
       caption="Looking For a"
-      title="Landing page"
-      txtGradient="template?"
+      title="Meet your zone"
+      txtGradient="standard?"
       description="Fuse with dashboards to produce a superior product."
       sx={{ textAlign: { xs: 'center', md: 'left' } }}
     />
@@ -101,7 +101,7 @@ export function HomeZoneUI({ sx, ...other }: BoxProps) {
             '&:hover': { bgcolor: 'common.white' },
           }}
         >
-          Visit Idnyx
+          Visit
         </Button>
       </Box>
     </Stack>
