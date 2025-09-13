@@ -1,10 +1,10 @@
 import type { SWRConfiguration } from 'swr';
 import type { ICalendarEvent } from 'src/types/calendar';
-
+import type {Response} from "../types/response";
 import { useMemo } from 'react';
 import useSWR, { mutate } from 'swr';
-
 import axios, { fetcher, endpoints } from 'src/lib/axios';
+import type {EventsResponse} from "../types/api/calendar";
 
 // ----------------------------------------------------------------------
 
@@ -20,14 +20,8 @@ const swrOptions: SWRConfiguration = {
 
 // ----------------------------------------------------------------------
 
-type EventsData = {
-  data: {
-    events: ICalendarEvent[];
-  };
-};
-
 export function useGetEvents() {
-  const { data, isLoading, error, isValidating } = useSWR<EventsData>(CALENDAR_ENDPOINT, fetcher, {
+  const { data, isLoading, error, isValidating } = useSWR<Response<EventsResponse>>(CALENDAR_ENDPOINT, fetcher, {
     ...swrOptions,
   });
 

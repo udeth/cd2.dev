@@ -1,10 +1,14 @@
 import type { SWRConfiguration } from 'swr';
-import type { IChatMessage, IChatParticipant, IChatConversation } from 'src/types/chat';
-
+import type { IChatMessage, IChatConversation } from 'src/types/chat';
+import type {
+  ContactsResponse,
+  ConversationResponse,
+  ConversationsResponse
+} from 'src/types/api/chat';
+import type {Response} from "../types/response";
 import { useMemo } from 'react';
 import { keyBy } from 'es-toolkit';
 import useSWR, { mutate } from 'swr';
-
 import axios, { fetcher, endpoints } from 'src/lib/axios';
 
 // ----------------------------------------------------------------------
@@ -21,16 +25,10 @@ const swrOptions: SWRConfiguration = {
 
 // ----------------------------------------------------------------------
 
-type ContactsData = {
-  data: {
-    contacts: IChatParticipant[];
-  };
-};
-
 export function useGetContacts() {
   const url = [CHAT_ENDPOINT + 'endpoint-contacts.json', { params: { endpoint: 'contacts' } }];
 
-  const { data, isLoading, error, isValidating } = useSWR<ContactsData>(url, fetcher, {
+  const { data, isLoading, error, isValidating } = useSWR<Response<ContactsResponse>>(url, fetcher, {
     ...swrOptions,
   });
 
@@ -50,16 +48,10 @@ export function useGetContacts() {
 
 // ----------------------------------------------------------------------
 
-type ConversationsData = {
-  data: {
-    conversations: IChatConversation[];
-  };
-};
-
 export function useGetConversations() {
   const url = [CHAT_ENDPOINT + 'endpoint-conversations.json', { params: { endpoint: 'conversations' } }];
 
-  const { data, isLoading, error, isValidating } = useSWR<ConversationsData>(url, fetcher, {
+  const { data, isLoading, error, isValidating } = useSWR<Response<ConversationsResponse>>(url, fetcher, {
     ...swrOptions,
   });
 
@@ -81,18 +73,12 @@ export function useGetConversations() {
 
 // ----------------------------------------------------------------------
 
-type ConversationData = {
-  data: {
-    conversation: IChatConversation;
-  };
-};
-
 export function useGetConversation(conversationId: string) {
   const url = conversationId
     ? [CHAT_ENDPOINT + 'endpoint-conversationId.json', { params: { conversationId: `${conversationId}`, endpoint: 'conversation' } }]
     : '';
 
-  const { data, isLoading, error, isValidating } = useSWR<ConversationData>(url, fetcher, {
+  const { data, isLoading, error, isValidating } = useSWR<Response<ConversationResponse>>(url, fetcher, {
     ...swrOptions,
   });
 

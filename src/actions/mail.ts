@@ -1,10 +1,13 @@
 import type { SWRConfiguration } from 'swr';
-import type { IMail, IMailLabel } from 'src/types/mail';
-
+import type {
+  MailResponse,
+  MailsResponse,
+  LabelsResponse
+} from 'src/types/api/mail';
+import type {Response} from "../types/response";
 import useSWR from 'swr';
 import { useMemo } from 'react';
 import { keyBy } from 'es-toolkit';
-
 import { fetcher, endpoints } from 'src/lib/axios';
 
 // ----------------------------------------------------------------------
@@ -17,16 +20,10 @@ const swrOptions: SWRConfiguration = {
 
 // ----------------------------------------------------------------------
 
-type LabelsData = {
-  data: {
-    labels: IMailLabel[];
-  };
-};
-
 export function useGetLabels() {
   const url = endpoints.mail.labels;
 
-  const { data, isLoading, error, isValidating } = useSWR<LabelsData>(url, fetcher, {
+  const { data, isLoading, error, isValidating } = useSWR<Response<LabelsResponse>>(url, fetcher, {
     ...swrOptions,
   });
 
@@ -46,16 +43,10 @@ export function useGetLabels() {
 
 // ----------------------------------------------------------------------
 
-type MailsData = {
-  data: {
-    mails: IMail[];
-  };
-};
-
 export function useGetMails(labelId: string) {
   const url = labelId ? [endpoints.mail.list, { params: { labelId } }] : '';
 
-  const { data, isLoading, error, isValidating } = useSWR<MailsData>(url, fetcher, {
+  const { data, isLoading, error, isValidating } = useSWR<Response<MailsResponse>>(url, fetcher, {
     ...swrOptions,
   });
 
@@ -77,16 +68,10 @@ export function useGetMails(labelId: string) {
 
 // ----------------------------------------------------------------------
 
-type MailData = {
-  data: {
-    mail: IMail;
-  };
-};
-
 export function useGetMail(mailId: string) {
   const url = mailId ? [endpoints.mail.details, { params: { mailId } }] : '';
 
-  const { data, isLoading, error, isValidating } = useSWR<MailData>(url, fetcher, {
+  const { data, isLoading, error, isValidating } = useSWR<Response<MailResponse>>(url, fetcher, {
     ...swrOptions,
   });
 

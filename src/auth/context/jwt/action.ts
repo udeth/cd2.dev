@@ -5,7 +5,7 @@ import type {
   SignUpRequest,
   SendVerificationCodeRequest,
   SignInWithGoogleCodeRequest
-} from "../../../types/auth";
+} from "../../../types/api/auth";
 import * as authApi from 'src/actions/auth';
 
 // ----------------------------------------------------------------------

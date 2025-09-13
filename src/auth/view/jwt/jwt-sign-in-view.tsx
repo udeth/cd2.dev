@@ -24,7 +24,7 @@ import { useAuthContext } from '../../hooks';
 import { getErrorMessage } from '../../utils';
 import { FormHead } from '../../components/form-head';
 import { signInWithGoogle, signInWithPassword } from '../../context/jwt';
-import {SignInRequest} from "../../../types/auth";
+import {SignInRequest} from "../../../types/api/auth";
 
 // ----------------------------------------------------------------------
 

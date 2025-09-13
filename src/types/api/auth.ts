@@ -22,3 +22,21 @@ export type SignInWithGoogleCodeRequest = {
   authuser: string;
   prompt: string;
 };
+
+// ----------------------------------------------------------------------
+
+export interface SignInResponse {
+  token: string;
+}
+
+export interface SignUpResponse {
+  token: string;
+}
+
+export interface GoogleOAuthResponse {
+  auth_url: string;
+}
+
+export interface GoogleSignInResponse {
+  access_token: string;
+}

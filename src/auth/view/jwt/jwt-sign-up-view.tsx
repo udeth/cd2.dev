@@ -23,7 +23,7 @@ import { useAuthContext } from '../../hooks';
 import { getErrorMessage } from '../../utils';
 import { FormHead } from '../../components/form-head';
 import { SignUpTerms } from '../../components/sign-up-terms';
-import {SendVerificationCodeRequest, SignUpRequest} from "../../../types/auth";
+import {SendVerificationCodeRequest, SignUpRequest} from "../../../types/api/auth";
 
 // ----------------------------------------------------------------------
 

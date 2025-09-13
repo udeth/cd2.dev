@@ -1,10 +1,14 @@
 import type { SWRConfiguration } from 'swr';
-import type { IPostItem } from 'src/types/blog';
-
+import type {
+  PostResponse,
+  PostsResponse,
+  LatestPostsResponse,
+  SearchResultsResponse
+} from 'src/types/api/blog';
 import useSWR from 'swr';
 import { useMemo } from 'react';
-
 import { fetcher, endpoints } from 'src/lib/axios';
+import type {Response} from "../types/response";
 
 // ----------------------------------------------------------------------
 
@@ -16,16 +20,10 @@ const swrOptions: SWRConfiguration = {
 
 // ----------------------------------------------------------------------
 
-type PostsData = {
-  data: {
-    posts: IPostItem[];
-  };
-};
-
 export function useGetPosts() {
   const url = endpoints.post.list;
 
-  const { data, isLoading, error, isValidating } = useSWR<PostsData>(url, fetcher, {
+  const { data, isLoading, error, isValidating } = useSWR<Response<PostsResponse>>(url, fetcher, {
     ...swrOptions,
   });
 
@@ -45,16 +43,10 @@ export function useGetPosts() {
 
 // ----------------------------------------------------------------------
 
-type PostData = {
-  data: {
-    post: IPostItem;
-  };
-};
-
 export function useGetPost(title: string) {
   const url = title ? [endpoints.post.details, { params: { title } }] : '';
 
-  const { data, isLoading, error, isValidating } = useSWR<PostData>(url, fetcher, {
+  const { data, isLoading, error, isValidating } = useSWR<Response<PostResponse>>(url, fetcher, {
     ...swrOptions,
   });
 
@@ -73,16 +65,10 @@ export function useGetPost(title: string) {
 
 // ----------------------------------------------------------------------
 
-type LatestPostsData = {
-  data: {
-    latestPosts: IPostItem[];
-  };
-};
-
 export function useGetLatestPosts(title: string) {
   const url = title ? [endpoints.post.latest, { params: { title } }] : '';
 
-  const { data, isLoading, error, isValidating } = useSWR<LatestPostsData>(url, fetcher, {
+  const { data, isLoading, error, isValidating } = useSWR<Response<LatestPostsResponse>>(url, fetcher, {
     ...swrOptions,
   });
 
@@ -102,16 +88,10 @@ export function useGetLatestPosts(title: string) {
 
 // ----------------------------------------------------------------------
 
-type SearchResultsData = {
-  data: {
-    results: IPostItem[];
-  };
-};
-
 export function useSearchPosts(query: string) {
   const url = query ? [endpoints.post.search, { params: { query } }] : '';
 
-  const { data, isLoading, error, isValidating } = useSWR<SearchResultsData>(url, fetcher, {
+  const { data, isLoading, error, isValidating } = useSWR<Response<SearchResultsResponse>>(url, fetcher, {
     ...swrOptions,
     keepPreviousData: true,
   });

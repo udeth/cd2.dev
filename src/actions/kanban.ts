@@ -1,10 +1,10 @@
 import type { SWRConfiguration } from 'swr';
 import type { UniqueIdentifier } from '@dnd-kit/core';
 import type { IKanban, IKanbanTask, IKanbanColumn } from 'src/types/kanban';
-
+import type { BoardResponse } from 'src/types/api/kanban';
+import type {Response} from "../types/response";
 import useSWR, { mutate } from 'swr';
 import { useMemo, startTransition } from 'react';
-
 import axios, { fetcher, endpoints } from 'src/lib/axios';
 
 // ----------------------------------------------------------------------
@@ -21,14 +21,8 @@ const swrOptions: SWRConfiguration = {
 
 // ----------------------------------------------------------------------
 
-type BoardData = {
-  data: {
-    board: IKanban;
-  };
-};
-
 export function useGetBoard() {
-  const { data, isLoading, error, isValidating } = useSWR<BoardData>(KANBAN_ENDPOINT, fetcher, {
+  const { data, isLoading, error, isValidating } = useSWR<Response<BoardResponse>>(KANBAN_ENDPOINT, fetcher, {
     ...swrOptions,
   });
 
@@ -64,9 +58,9 @@ export async function createColumn(columnData: IKanbanColumn) {
    */
   mutate(
     KANBAN_ENDPOINT,
-    (currentData: BoardData | undefined) => {
+    (currentData: BoardResponse | undefined) => {
       if (!currentData) return currentData;
-      const board = currentData.data.board;
+      const board = currentData.board;
 
       // add new column in board.columns
       const columns = [...board.columns, columnData];
@@ -74,7 +68,7 @@ export async function createColumn(columnData: IKanbanColumn) {
       // add new task in board.tasks
       const tasks = { ...board.tasks, [columnData.id]: [] };
 
-      return { ...currentData, data: { ...currentData.data, board: { ...board, columns, tasks } } };
+      return { ...currentData, data: { ...currentData, board: { ...board, columns, tasks } } };
     },
     false
   );
@@ -97,9 +91,9 @@ export async function updateColumn(columnId: UniqueIdentifier, columnName: strin
   startTransition(() => {
     mutate(
       KANBAN_ENDPOINT,
-      (currentData: BoardData | undefined) => {
+      (currentData: BoardResponse | undefined) => {
         if (!currentData) return currentData;
-        const board = currentData.data.board;
+        const board = currentData.board;
 
         const columns = board.columns.map((column) =>
           column.id === columnId
@@ -111,7 +105,7 @@ export async function updateColumn(columnId: UniqueIdentifier, columnName: strin
             : column
         );
 
-        return { ...currentData, data: { ...currentData.data, board: { ...board, columns } } };
+        return { ...currentData, data: { ...currentData, board: { ...board, columns } } };
       },
       false
     );
@@ -127,11 +121,11 @@ export async function moveColumn(updateColumns: IKanbanColumn[]) {
   startTransition(() => {
     mutate(
       KANBAN_ENDPOINT,
-      (currentData: BoardData | undefined) => {
+      (currentData: BoardResponse | undefined) => {
         if (!currentData) return currentData;
-        const board = currentData.data.board;
+        const board = currentData.board;
 
-        return { ...currentData, data: { ...currentData.data, board: { ...board, columns: updateColumns } } };
+        return { ...currentData, data: { ...currentData, board: { ...board, columns: updateColumns } } };
       },
       false
     );
@@ -163,14 +157,14 @@ export async function clearColumn(columnId: UniqueIdentifier) {
   startTransition(() => {
     mutate(
       KANBAN_ENDPOINT,
-      (currentData: BoardData | undefined) => {
+      (currentData: BoardResponse | undefined) => {
         if (!currentData) return currentData;
-        const board = currentData.data.board;
+        const board = currentData.board;
 
         // remove all tasks in column
         const tasks = { ...board.tasks, [columnId]: [] };
 
-        return { ...currentData, data: { ...currentData.data, board: { ...board, tasks } } };
+        return { ...currentData, data: { ...currentData, board: { ...board, tasks } } };
       },
       false
     );
@@ -193,9 +187,9 @@ export async function deleteColumn(columnId: UniqueIdentifier) {
    */
   mutate(
     KANBAN_ENDPOINT,
-    (currentData: BoardData | undefined) => {
+    (currentData: BoardResponse | undefined) => {
       if (!currentData) return currentData;
-      const board = currentData.data.board;
+      const board = currentData.board;
 
       // delete column in board.columns
       const columns = board.columns.filter((column) => column.id !== columnId);
@@ -208,7 +202,7 @@ export async function deleteColumn(columnId: UniqueIdentifier) {
           return obj;
         }, {});
 
-      return { ...currentData, data: { ...currentData.data, board: { ...board, columns, tasks } } };
+      return { ...currentData, data: { ...currentData, board: { ...board, columns, tasks } } };
     },
     false
   );
@@ -231,14 +225,14 @@ export async function createTask(columnId: UniqueIdentifier, taskData: IKanbanTa
   startTransition(() => {
     mutate(
       KANBAN_ENDPOINT,
-      (currentData: BoardData | undefined) => {
+      (currentData: BoardResponse | undefined) => {
         if (!currentData) return currentData;
-        const board = currentData.data.board;
+        const board = currentData.board;
 
         // add task in board.tasks
         const tasks = { ...board.tasks, [columnId]: [taskData, ...board.tasks[columnId]] };
 
-        return { ...currentData, data: { ...currentData.data, board: { ...board, tasks } } };
+        return { ...currentData, data: { ...currentData, board: { ...board, tasks } } };
       },
       false
     );
@@ -262,9 +256,9 @@ export async function updateTask(columnId: UniqueIdentifier, taskData: IKanbanTa
   startTransition(() => {
     mutate(
       KANBAN_ENDPOINT,
-      (currentData: BoardData | undefined) => {
+      (currentData: BoardResponse | undefined) => {
         if (!currentData) return currentData;
-        const board = currentData.data.board;
+        const board = currentData.board;
 
         // tasks in column
         const tasksInColumn = board.tasks[columnId];
@@ -282,7 +276,7 @@ export async function updateTask(columnId: UniqueIdentifier, taskData: IKanbanTa
 
         const tasks = { ...board.tasks, [columnId]: updateTasks };
 
-        return { ...currentData, data: { ...currentData.data, board: { ...board, tasks } } };
+        return { ...currentData, data: { ...currentData, board: { ...board, tasks } } };
       },
       false
     );
@@ -298,14 +292,14 @@ export async function moveTask(updateTasks: IKanban['tasks']) {
   startTransition(() => {
     mutate(
       KANBAN_ENDPOINT,
-      (currentData: BoardData | undefined) => {
+      (currentData: BoardResponse | undefined) => {
         if (!currentData) return currentData;
-        const board = currentData.data.board;
+        const board = currentData.board;
 
         // update board.tasks
         const tasks = updateTasks;
 
-        return { ...currentData, data: { ...currentData.data, board: { ...board, tasks } } };
+        return { ...currentData, data: { ...currentData, board: { ...board, tasks } } };
       },
       false
     );
@@ -336,9 +330,9 @@ export async function deleteTask(columnId: UniqueIdentifier, taskId: UniqueIdent
    */
   mutate(
     KANBAN_ENDPOINT,
-    (currentData: BoardData | undefined) => {
+    (currentData: BoardResponse | undefined) => {
       if (!currentData) return currentData;
-      const board = currentData.data.board;
+      const board = currentData.board;
 
       // delete task in column
       const tasks = {

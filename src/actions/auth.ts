@@ -2,25 +2,28 @@ import axios, { endpoints } from 'src/lib/axios';
 import type {
   SignInRequest,
   SignUpRequest,
-  SendVerificationCodeRequest,
-  SignInWithGoogleCodeRequest
-} from 'src/types/auth';
+  SignInResponse,
+  SignUpResponse,
+  GoogleOAuthResponse, GoogleSignInResponse,
+  SendVerificationCodeRequest, SignInWithGoogleCodeRequest,
+} from 'src/types/api/auth';
+import type {Response} from "../types/response";
 
 // ----------------------------------------------------------------------
 
 /** **************************************
  * Sign in with password
  *************************************** */
-export const signInWithPassword = async (params: SignInRequest): Promise<{ token: string }> => {
+export const signInWithPassword = async (params: SignInRequest): Promise<SignInResponse> => {
   try {
-    const res = await axios.post(endpoints.auth.signIn, params);
-    const { token } = res.data.data;
+    const rsp = await axios.post<Response<SignInResponse>>(endpoints.auth.signIn, params);
+    const data  = rsp.data.data;
 
-    if (!token) {
+    if (!data) {
       throw new Error('Access token not found in response');
     }
 
-    return { token };
+    return data;
   } catch (error) {
     console.error('Error during sign in:', error);
     throw error;
@@ -30,16 +33,16 @@ export const signInWithPassword = async (params: SignInRequest): Promise<{ token
 /** **************************************
  * Sign up
  *************************************** */
-export const signUp = async (req: SignUpRequest): Promise<{ token: string }> => {
+export const signUp = async (req: SignUpRequest): Promise<SignUpResponse> => {
   try {
-    const res = await axios.post(endpoints.auth.signUp, req);
-    const { token } = res.data.data;
+    const rsp = await axios.post<Response<SignUpResponse>>(endpoints.auth.signUp, req);
+    const data = rsp.data.data;
 
-    if (!token) {
+    if (!data) {
       throw new Error('Access token not found in response');
     }
 
-    return { token };
+    return data;
   } catch (error) {
     console.error('Error during sign up:', error);
     throw error;
@@ -51,9 +54,9 @@ export const signUp = async (req: SignUpRequest): Promise<{ token: string }> => 
  *************************************** */
 export const sendVerificationCode = async (req: SendVerificationCodeRequest): Promise<void> => {
   try {
-    const res = await axios.post(endpoints.auth.sendVerificationCode, req);
+    const rsp = await axios.post<Response<void>>(endpoints.auth.sendVerificationCode, req);
 
-    if (!res.data) {
+    if (!rsp.data) {
       throw new Error('Failed to send verification code');
     }
   } catch (error) {
@@ -65,16 +68,16 @@ export const sendVerificationCode = async (req: SendVerificationCodeRequest): Pr
 /** **************************************
  * Get Google OAuth URL
  *************************************** */
-export const getGoogleOAuthUrl = async (): Promise<{ auth_url: string }> => {
+export const getGoogleOAuthUrl = async (): Promise<GoogleOAuthResponse> => {
   try {
-    const res = await axios.post(endpoints.auth.googleOAuth);
-    const { auth_url } = res.data.data;
+    const rsp = await axios.post<Response<GoogleOAuthResponse>>(endpoints.auth.googleOAuth);
+    const data = rsp.data.data;
 
-    if (!auth_url) {
+    if (!data) {
       throw new Error('Failed to get Google OAuth URL from server');
     }
 
-    return { auth_url };
+    return data;
   } catch (error) {
     console.error('Error getting Google OAuth URL:', error);
     throw error;
@@ -84,16 +87,16 @@ export const getGoogleOAuthUrl = async (): Promise<{ auth_url: string }> => {
 /** **************************************
  * Sign in with Google code
  *************************************** */
-export const signInWithGoogleCode = async (req: SignInWithGoogleCodeRequest): Promise<{ access_token: string }> => {
+export const signInWithGoogleCode = async (req: SignInWithGoogleCodeRequest): Promise<GoogleSignInResponse> => {
   try {
-    const res = await axios.post(endpoints.auth.googleSignIn, req);
-    const { access_token } = res.data.data;
+    const rsp = await axios.post<Response<GoogleSignInResponse>>(endpoints.auth.googleSignIn, req);
+    const data = rsp.data.data;
 
-    if (!access_token) {
+    if (!data) {
       throw new Error('Access token not found in response');
     }
 
-    return { access_token };
+    return data;
   } catch (error) {
     console.error('Error during Google sign in:', error);
     throw error;
