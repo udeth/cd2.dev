@@ -4,6 +4,8 @@ import type {
   GetUserWorkspacesResponse,
   CreateWorkspaceRequest,
   CreateWorkspaceResponse,
+  DeleteWorkspaceRequest,
+  DeleteWorkspaceResponse,
 } from 'src/types/api/workspace';
 import type { Response } from '../types/response';
 import { _workspacesMock } from '../_mock';
@@ -90,5 +92,57 @@ export const createWorkspace = async (params: CreateWorkspaceRequest): Promise<C
     // 在生产环境中，应该抛出错误而不是返回模拟数据
     // throw error;
     return mockResponse;
+  }
+};
+
+// ----------------------------------------------------------------------
+
+/** **************************************
+ * Delete workspace
+ *************************************** */
+export const deleteWorkspace = async (params: DeleteWorkspaceRequest): Promise<DeleteWorkspaceResponse> => {
+  try {
+    // 尝试调用真实API
+    const rsp = await axios.post<Response<DeleteWorkspaceResponse>>(endpoints.workspace.delete, params);
+    const data = rsp.data.data;
+
+    if (data !== undefined) {
+      // 从模拟数据中移除删除的工作区（用于本地状态同步）
+      const index = _workspacesMock.findIndex(workspace => workspace.id === params.id);
+      if (index > -1) {
+        const deletedWorkspace = _workspacesMock[index];
+        _workspacesMock.splice(index, 1);
+
+        // 如果删除的是默认工作区，需要设置一个新的默认工作区
+        if (deletedWorkspace.is_default && _workspacesMock.length > 0) {
+          _workspacesMock[0].is_default = true;
+        }
+      }
+
+      return data;
+    }
+
+    throw new Error('Failed to delete workspace: No data returned');
+  } catch (error) {
+    console.error('Error deleting workspace:', error);
+
+    // 在真实API失败的情况下，仍然从模拟数据中删除（用于开发和测试）
+    const index = _workspacesMock.findIndex(workspace => workspace.id === params.id);
+    if (index > -1) {
+      const deletedWorkspace = _workspacesMock[index];
+      _workspacesMock.splice(index, 1);
+
+      // 如果删除的是默认工作区，需要设置一个新的默认工作区
+      if (deletedWorkspace.is_default && _workspacesMock.length > 0) {
+        _workspacesMock[0].is_default = true;
+      }
+
+      // 返回成功响应
+      return {};
+    }
+
+    // 在生产环境中，应该抛出错误而不是返回成功
+    // throw error;
+    throw new Error(`Workspace with id ${params.id} not found`);
   }
 };

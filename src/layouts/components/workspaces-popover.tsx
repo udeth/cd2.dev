@@ -2,7 +2,7 @@ import type { Theme, SxProps } from '@mui/material/styles';
 import type { ButtonBaseProps } from '@mui/material/ButtonBase';
 
 import { useState, useCallback, useEffect } from 'react';
-import { usePopover } from 'minimal-shared/hooks';
+import { usePopover, useBoolean } from 'minimal-shared/hooks';
 
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
@@ -13,12 +13,16 @@ import Typography from '@mui/material/Typography';
 import ButtonBase from '@mui/material/ButtonBase';
 import Button, { buttonClasses } from '@mui/material/Button';
 import Skeleton from '@mui/material/Skeleton';
+import IconButton from '@mui/material/IconButton';
 
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 import { CustomPopover } from 'src/components/custom-popover';
+import { ConfirmDialog } from 'src/components/custom-dialog';
 import { WorkspaceCreateDialog } from 'src/components/workspace-create-dialog';
+
+import { deleteWorkspace } from 'src/actions/workspace';
 
 // ----------------------------------------------------------------------
 
@@ -32,15 +36,18 @@ export type WorkspacesPopoverProps = ButtonBaseProps & {
   }[];
   loading?: boolean;
   onWorkspaceCreated?: () => void;
+  onWorkspaceDeleted?: () => void;
 };
 
-export function WorkspacesPopover({ data = [], loading = false, onWorkspaceCreated, sx, ...other }: WorkspacesPopoverProps) {
+export function WorkspacesPopover({ data = [], loading = false, onWorkspaceCreated, onWorkspaceDeleted, sx, ...other }: WorkspacesPopoverProps) {
   const mediaQuery = 'sm';
 
   const { open, anchorEl, onClose, onOpen } = usePopover();
+  const confirmDialog = useBoolean();
 
   const [workspace, setWorkspace] = useState(data[0]);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [workspaceToDelete, setWorkspaceToDelete] = useState<(typeof data)[0] | null>(null);
 
   // 监听 data 变化，当数据更新时同步更新当前选中的工作区
   useEffect(() => {
@@ -71,6 +78,40 @@ export function WorkspacesPopover({ data = [], loading = false, onWorkspaceCreat
     setCreateDialogOpen(false);
     onWorkspaceCreated?.();
   }, [onWorkspaceCreated]);
+
+  // eslint-disable-next-line @typescript-eslint/no-shadow
+  const handleDeleteWorkspace = useCallback((workspaceToDelete: (typeof data)[0]) => {
+    setWorkspaceToDelete(workspaceToDelete);
+    confirmDialog.onTrue();
+    onClose();
+  }, [confirmDialog, onClose]);
+
+  const handleConfirmDelete = useCallback(async () => {
+    if (!workspaceToDelete) return;
+
+    try {
+      await deleteWorkspace({ id: Number(workspaceToDelete.id) });
+
+      // 如果删除的是当前选中的工作区，需要切换到其他工作区
+      if (workspace?.id === workspaceToDelete.id) {
+        const remainingWorkspaces = data.filter(w => w.id !== workspaceToDelete.id);
+        if (remainingWorkspaces.length > 0) {
+          // 优先选择标记为默认的工作区，如果没有则选择第一个
+          const newWorkspace = remainingWorkspaces.find(w => w.is_default) || remainingWorkspaces[0];
+          setWorkspace(newWorkspace);
+        } else {
+          setWorkspace(data[0]); // 如果没有剩余工作区，保持第一个作为默认值
+        }
+      }
+
+      confirmDialog.onFalse();
+      setWorkspaceToDelete(null);
+      onWorkspaceDeleted?.();
+    } catch (error) {
+      console.error('Failed to delete workspace:', error);
+      // 这里可以添加错误提示
+    }
+  }, [workspaceToDelete, workspace, data, confirmDialog, onWorkspaceDeleted]);
 
   const buttonBg: SxProps<Theme> = {
     height: 1,
@@ -238,7 +279,7 @@ export function WorkspacesPopover({ data = [], loading = false, onWorkspaceCreat
                 key={option.id}
                 selected={option.id === workspace?.id}
                 onClick={() => handleChangeWorkspace(option)}
-                sx={{ height: 48 }}
+                sx={{ height: 48, pr: 1 }}
               >
                 <Avatar alt={option.name} src={option.logo} sx={{ width: 24, height: 24 }} />
 
@@ -251,7 +292,29 @@ export function WorkspacesPopover({ data = [], loading = false, onWorkspaceCreat
                   {option.name}
                 </Typography>
 
-                <Label color={option.plan === 'Free' ? 'default' : 'info'}>{option.plan}</Label>
+                <Label color={option.plan === 'Free' ? 'default' : 'info'} sx={{ mr: 1 }}>
+                  {option.plan}
+                </Label>
+
+                {/* 只有当工作区数量大于1时才显示删除按钮 */}
+                {data.length > 1 && (
+                  <IconButton
+                    size="small"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleDeleteWorkspace(option);
+                    }}
+                    sx={{
+                      width: 24,
+                      height: 24,
+                      '&:hover': {
+                        color: 'error.main',
+                      },
+                    }}
+                  >
+                    <Iconify icon="solar:trash-bin-trash-bold" width={16} />
+                  </IconButton>
+                )}
               </MenuItem>
             ))
           )}
@@ -284,6 +347,31 @@ export function WorkspacesPopover({ data = [], loading = false, onWorkspaceCreat
     </CustomPopover>
   );
 
+  const renderConfirmDialog = () => (
+    <ConfirmDialog
+      open={confirmDialog.value}
+      onClose={() => {
+        confirmDialog.onFalse();
+        setWorkspaceToDelete(null);
+      }}
+      title="Delete workspace"
+      content={
+        workspaceToDelete ? (
+          <>
+            Are you sure want to delete workspace <strong>&#34;{workspaceToDelete.name}&#34;</strong> ? This action cannot be undone.
+          </>
+        ) : (
+          'Are you sure want to delete this workspace?'
+        )
+      }
+      action={
+        <Button variant="contained" color="error" onClick={handleConfirmDelete}>
+          Delete
+        </Button>
+      }
+    />
+  );
+
   return (
     <>
       {renderButton()}
@@ -293,6 +381,7 @@ export function WorkspacesPopover({ data = [], loading = false, onWorkspaceCreat
         onClose={() => setCreateDialogOpen(false)}
         onSuccess={handleWorkspaceCreated}
       />
+      {renderConfirmDialog()}
     </>
   );
 }

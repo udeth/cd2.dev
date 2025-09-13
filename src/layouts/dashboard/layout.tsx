@@ -143,6 +143,7 @@ export function DashboardLayout({
             data={workspaces}
             loading={workspacesLoading}
             onWorkspaceCreated={refetchWorkspaces}
+            onWorkspaceDeleted={refetchWorkspaces}
             sx={{ ...(isNavHorizontal && { color: 'var(--layout-nav-text-primary-color)' }) }}
           />
         </>

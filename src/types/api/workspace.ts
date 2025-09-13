@@ -35,3 +35,11 @@ export interface CreateWorkspaceResponse {
   created_at: string;
   updated_at: string;
 }
+
+// ----------------------------------------------------------------------
+
+export interface DeleteWorkspaceRequest {
+  id: number;
+}
+
+export interface DeleteWorkspaceResponse {}
