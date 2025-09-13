@@ -51,7 +51,7 @@ const renderLines = () => (
 export function HomeZoneUI({ sx, ...other }: BoxProps) {
   const renderDescription = () => (
     <SectionTitle
-      caption="Looking For a"
+      caption="With a good question."
       title="Meet your zone"
       txtGradient="standard?"
       description="Fuse with dashboards to produce a superior product."
