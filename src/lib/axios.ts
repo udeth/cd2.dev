@@ -87,5 +87,6 @@ export const endpoints = {
   },
   workspace: {
     list: '/workspace/list',
+    create: '/workspace/create',
   }
 } as const;
