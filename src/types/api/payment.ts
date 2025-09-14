@@ -7,6 +7,7 @@ export interface PayRequest {
 
 export interface PayResponse {
   redirect_url: string; // 支付跳转地址
+  trade_no: string; // 订单号
 }
 
 // ----------------------------------------------------------------------

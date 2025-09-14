@@ -38,16 +38,8 @@ export function NavUpgrade({ sx, ...other }: BoxProps) {
 
       toast.info('Payment page opened, waiting for payment confirmation...');
 
-      // 从支付URL中提取交易号，假设交易号在URL中
-      // 这里需要根据实际的URL结构来解析交易号
-      // 例如：如果URL包含 trade_no 参数，可以这样提取
-      const urlParams = new URL(result.redirect_url);
-      const tradeNo = urlParams.searchParams.get('trade_no') ||
-                     urlParams.searchParams.get('out_trade_no') ||
-                     `pay_${Date.now()}`; // 备用方案：使用时间戳生成
-
-      // 开始轮询支付状态
-      const paymentSuccess = await pollPaymentStatus(tradeNo);
+      // 使用返回的交易号进行轮询
+      const paymentSuccess = await pollPaymentStatus(result.trade_no);
 
       if (paymentSuccess) {
         toast.success('Payment successful! Account upgraded to Pro version');
@@ -145,16 +137,8 @@ export function UpgradeBlock({ sx, ...other }: BoxProps) {
 
       toast.info('Payment page opened, waiting for payment confirmation...');
 
-      // 从支付URL中提取交易号，假设交易号在URL中
-      // 这里需要根据实际的URL结构来解析交易号
-      // 例如：如果URL包含 trade_no 参数，可以这样提取
-      const urlParams = new URL(result.redirect_url);
-      const tradeNo = urlParams.searchParams.get('trade_no') ||
-                     urlParams.searchParams.get('out_trade_no') ||
-                     `pay_${Date.now()}`; // 备用方案：使用时间戳生成
-
-      // 开始轮询支付状态
-      const paymentSuccess = await pollPaymentStatus(tradeNo);
+      // 使用返回的交易号进行轮询
+      const paymentSuccess = await pollPaymentStatus(result.trade_no);
 
       if (paymentSuccess) {
         toast.success('Payment successful! Account upgraded to Pro version');
