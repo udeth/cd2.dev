@@ -173,15 +173,57 @@ export function JwtSignUpView() {
             },
             endAdornment: (
               <InputAdornment position="end">
-                <Button
+                <IconButton
                   size="small"
                   onClick={handleSendVerificationCode}
                   disabled={!emailValue || sendingCode || countdown > 0}
-                  loading={sendingCode}
-                  sx={{ minWidth: 'auto'}}
+                  edge="end"
+                  sx={{ 
+                    fontSize: '0.75rem',
+                    minWidth: 'auto',
+                    transition: 'all 0.2s ease-in-out',
+                    '&.Mui-disabled': {
+                      color: 'text.disabled'
+                    },
+                    '&:hover:not(.Mui-disabled)': {
+                      backgroundColor: 'action.hover',
+                      transform: 'scale(1.05)'
+                    }
+                  }}
                 >
-                  {countdown > 0 ? `${countdown}s` : 'send'}
-                </Button>
+                  {sendingCode ? (
+                    <Box
+                      sx={{
+                        width: 16,
+                        height: 16,
+                        marginRight: '-6px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                        <Box
+                          sx={{
+                            width: 16,
+                            height: 16,
+                            border: '2px solid',
+                            borderColor: 'text.secondary',
+                            borderTopColor: 'transparent',
+                            borderRadius: '50%',
+                            animation: 'spin 0.8s linear infinite',
+                            '@keyframes spin': {
+                              '0%': { transform: 'rotate(0deg)' },
+                              '100%': { transform: 'rotate(360deg)' }
+                            }
+                          }}
+                        />
+                    </Box>
+                  ) : countdown > 0 ? (
+                    countdown
+                  ) : (
+                        <Iconify icon="custom:send-fill" sx={{ marginRight: '-6px' }} />
+                  )}
+                </IconButton>
               </InputAdornment>
             ),
           },
