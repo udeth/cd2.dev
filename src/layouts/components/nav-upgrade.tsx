@@ -2,24 +2,71 @@ import type { BoxProps } from '@mui/material/Box';
 
 import { m } from 'framer-motion';
 import { varAlpha } from 'minimal-shared/utils';
+import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
-
-import { paths } from 'src/routes/paths';
+import CircularProgress from '@mui/material/CircularProgress';
 
 import { CONFIG } from 'src/global-config';
 
 import { Label } from 'src/components/label';
+import { toast } from 'src/components/snackbar';
 
 import { useAuthContext } from 'src/auth/hooks';
+import { getPayRedirectUrl, pollPaymentStatus } from 'src/actions/payment';
 
 // ----------------------------------------------------------------------
 
 export function NavUpgrade({ sx, ...other }: BoxProps) {
   const { user } = useAuthContext();
+  const [loading, setLoading] = useState(false);
+
+  const handleUpgradeClick = useCallback(async () => {
+    setLoading(true);
+
+    try {
+      const result = await getPayRedirectUrl({
+        payway: 'alipay',
+        productid: 'pro-plan', // 这里可能需要根据实际产品ID调整
+      });
+
+      // 在新窗口中打开支付链接
+      const paymentWindow = window.open(result.redirect_url, '_blank', 'noopener,noreferrer');
+
+      toast.info('Payment page opened, waiting for payment confirmation...');
+
+      // 从支付URL中提取交易号，假设交易号在URL中
+      // 这里需要根据实际的URL结构来解析交易号
+      // 例如：如果URL包含 trade_no 参数，可以这样提取
+      const urlParams = new URL(result.redirect_url);
+      const tradeNo = urlParams.searchParams.get('trade_no') ||
+                     urlParams.searchParams.get('out_trade_no') ||
+                     `pay_${Date.now()}`; // 备用方案：使用时间戳生成
+
+      // 开始轮询支付状态
+      const paymentSuccess = await pollPaymentStatus(tradeNo);
+
+      if (paymentSuccess) {
+        toast.success('Payment successful! Account upgraded to Pro version');
+        // 这里可以添加刷新用户信息的逻辑
+        // 例如：重新获取用户数据，更新UI状态等
+        if (paymentWindow && !paymentWindow.closed) {
+          paymentWindow.close();
+        }
+      } else {
+        toast.warning('No payment success detected, please confirm payment status');
+      }
+
+    } catch (error) {
+      console.error('Payment request failed:', error);
+      toast.error('Get pay redirect url failed, please try again');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   return (
     <Box
@@ -68,9 +115,9 @@ export function NavUpgrade({ sx, ...other }: BoxProps) {
 
         <Button
           variant="contained"
-          href={paths.minimalStore}
-          target="_blank"
-          rel="noopener noreferrer"
+          onClick={handleUpgradeClick}
+          disabled={loading}
+          startIcon={loading ? <CircularProgress size={16} color="inherit" /> : null}
         >
           Upgrade to Pro
         </Button>
@@ -82,6 +129,52 @@ export function NavUpgrade({ sx, ...other }: BoxProps) {
 // ----------------------------------------------------------------------
 
 export function UpgradeBlock({ sx, ...other }: BoxProps) {
+  const [loading, setLoading] = useState(false);
+
+  const handleUpgradeClick = useCallback(async () => {
+    setLoading(true);
+
+    try {
+      const result = await getPayRedirectUrl({
+        payway: 'alipay',
+        productid: 'pro-plan', // 这里可能需要根据实际产品ID调整
+      });
+
+      // 在新窗口中打开支付链接
+      const paymentWindow = window.open(result.redirect_url, '_blank', 'noopener,noreferrer');
+
+      toast.info('Payment page opened, waiting for payment confirmation...');
+
+      // 从支付URL中提取交易号，假设交易号在URL中
+      // 这里需要根据实际的URL结构来解析交易号
+      // 例如：如果URL包含 trade_no 参数，可以这样提取
+      const urlParams = new URL(result.redirect_url);
+      const tradeNo = urlParams.searchParams.get('trade_no') ||
+                     urlParams.searchParams.get('out_trade_no') ||
+                     `pay_${Date.now()}`; // 备用方案：使用时间戳生成
+
+      // 开始轮询支付状态
+      const paymentSuccess = await pollPaymentStatus(tradeNo);
+
+      if (paymentSuccess) {
+        toast.success('Payment successful! Account upgraded to Pro version');
+        // 这里可以添加刷新用户信息的逻辑
+        // 例如：重新获取用户数据，更新UI状态等
+        if (paymentWindow && !paymentWindow.closed) {
+          paymentWindow.close();
+        }
+      } else {
+        toast.warning('No payment success detected, please confirm payment status');
+      }
+
+    } catch (error) {
+      console.error('Payment request failed:', error);
+      toast.error('Get pay redirect url failed, please try again');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   return (
     <Box
       sx={[
@@ -156,7 +249,14 @@ export function UpgradeBlock({ sx, ...other }: BoxProps) {
           Power up Productivity!
         </Box>
 
-        <Button variant="contained" size="small" color="warning">
+        <Button
+          variant="contained"
+          size="small"
+          color="warning"
+          onClick={handleUpgradeClick}
+          disabled={loading}
+          startIcon={loading ? <CircularProgress size={14} color="inherit" /> : null}
+        >
           Upgrade to Pro
         </Button>
       </Box>

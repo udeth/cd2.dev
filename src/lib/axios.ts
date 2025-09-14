@@ -89,5 +89,9 @@ export const endpoints = {
     list: '/workspace/list',
     create: '/workspace/create',
     delete: '/workspace/delete',
+  },
+  payment: {
+    alipay: '/thr/pay/alipay',
+    callback: '/thr/pay/alipay/callback',
   }
 } as const;
