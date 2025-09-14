@@ -50,7 +50,7 @@ export function AccountDrawer({ data = [], sx, ...other }: AccountDrawerProps) {
 
   const renderAvatar = () => (
     <AnimateBorder
-      sx={{ mb: 2, p: '6px', width: 96, height: 96, borderRadius: '50%' }}
+      sx={{ mb: 2, p: '6px', width: 126, height: 126, borderRadius: '50%' }}
       slotProps={{
         primaryBorder: { size: 120, sx: { color: 'primary.main' } },
       }}

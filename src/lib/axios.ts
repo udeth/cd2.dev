@@ -93,5 +93,8 @@ export const endpoints = {
   payment: {
     alipay: '/thr/pay/alipay',
     callback: '/thr/pay/alipay/callback',
+  },
+  upload: {
+    file: '/upload/file',
   }
 } as const;
