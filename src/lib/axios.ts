@@ -66,6 +66,7 @@ export const endpoints = {
     signIn: '/auth/login',
     signUp: '/auth/register',
     me: '/user/profile',
+    updateProfile: '/user/update-profile',
     googleOAuth: '/oauth/google',
     googleSignIn: '/oauth/google/callback',
   },

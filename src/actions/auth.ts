@@ -6,6 +6,7 @@ import type {
   SignUpResponse,
   GoogleOAuthResponse, GoogleSignInResponse,
   SendVerificationCodeRequest, SignInWithGoogleCodeRequest,
+  UpdateUserInfoRequest, UpdateUserInfoResponse,
 } from 'src/types/api/auth';
 import type {Response} from "../types/response";
 
@@ -99,6 +100,25 @@ export const signInWithGoogleCode = async (req: SignInWithGoogleCodeRequest): Pr
     return data;
   } catch (error) {
     console.error('Error during Google sign in:', error);
+    throw error;
+  }
+};
+
+/** **************************************
+ * Update user profile
+ *************************************** */
+export const updateUserProfile = async (req: UpdateUserInfoRequest): Promise<UpdateUserInfoResponse> => {
+  try {
+    const rsp = await axios.post<Response<UpdateUserInfoResponse>>(endpoints.auth.updateProfile, req);
+    const data = rsp.data.data;
+
+    if (!data && rsp.data.data !== null) {
+      throw new Error('Failed to update user profile');
+    }
+
+    return data || {};
+  } catch (error) {
+    console.error('Error during update user profile:', error);
     throw error;
   }
 };
