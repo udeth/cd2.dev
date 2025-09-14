@@ -62,10 +62,10 @@ export function JwtSignUpView() {
   const [countdown, setCountdown] = useState(0);
 
   const defaultValues: SignUpSchemaType = {
-    firstName: 'Hello',
-    lastName: 'Friend',
-    email: 'hello@gmail.com',
-    password: '00000000',
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
     verificationCode: '',
   };
 
@@ -139,18 +139,21 @@ export function JwtSignUpView() {
         <Field.Text
           name="firstName"
           label="First name"
-          slotProps={{ inputLabel: { shrink: true } }}
+          placeholder="First name"
+          slotProps={{ inputLabel: { shrink: true }, input: { placeholder: 'First name' } }}
         />
         <Field.Text
           name="lastName"
           label="Last name"
-          slotProps={{ inputLabel: { shrink: true } }}
+          placeholder="Last name"
+          slotProps={{ inputLabel: { shrink: true }, input: { placeholder: 'Last name' } }}
         />
       </Box>
 
       <Field.Text
         name="email"
         label="Email address"
+        placeholder="example@gmail.com"
         slotProps={{
           inputLabel: { shrink: true },
         }}
@@ -188,7 +191,7 @@ export function JwtSignUpView() {
       <Field.Text
         name="password"
         label="Password"
-        placeholder="6+ characters"
+        placeholder="8+ characters"
         type={showPassword.value ? 'text' : 'password'}
         slotProps={{
           inputLabel: { shrink: true },
