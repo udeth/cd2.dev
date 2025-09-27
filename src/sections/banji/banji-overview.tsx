@@ -7,8 +7,10 @@ import Tab from '@mui/material/Tab';
 import Card from '@mui/material/Card';
 import Tabs from '@mui/material/Tabs';
 import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import { Iconify } from 'src/components/iconify';
+import { BanjiX } from './banjix';
 // ----------------------------------------------------------------------
 
 const TABS = [
@@ -125,7 +127,14 @@ export function BanjiOverview({ sx, ...other }: CardProps) {
 
       {renderTabs()}
 
-      <>banji</>
+      {tabs.value === 'banjix' && <BanjiX />}
+      {tabs.value === 'banjiy' && (
+        <Box sx={{ p: 3, textAlign: 'center' }}>
+          <Typography variant="h6" color="text.secondary">
+            BanjiY 页面正在开发中...
+          </Typography>
+        </Box>
+      )}
     </Card>
   );
 }
