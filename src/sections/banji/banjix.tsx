@@ -168,7 +168,7 @@ export function BanjiX() {
         <Stack spacing={2} alignItems="center">
           <CircularProgress />
           <Typography variant="body2" color="text.secondary">
-            正在加载成员列表...
+            Loading members list...
           </Typography>
         </Stack>
       </Box>
@@ -213,10 +213,10 @@ export function BanjiX() {
     <Box>
       <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Typography variant="h5" sx={{ fontWeight: 600 }}>
-          成员列表
+          List of Members
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          共 {members.length} 位成员
+          Total {members.length} members
         </Typography>
       </Box>
 

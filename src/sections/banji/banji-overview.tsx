@@ -131,7 +131,7 @@ export function BanjiOverview({ sx, ...other }: CardProps) {
       {tabs.value === 'banjiy' && (
         <Box sx={{ p: 3, textAlign: 'center' }}>
           <Typography variant="h6" color="text.secondary">
-            BanjiY 页面正在开发中...
+            BanjiY will be released soon...
           </Typography>
         </Box>
       )}
