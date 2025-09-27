@@ -97,5 +97,10 @@ export const endpoints = {
   },
   upload: {
     file: '/upload/file',
+  },
+  banjix: {
+    members: '/banjix/members',
+    subject: '/banjix/subject',
+    studentScore: '/banjix/student-score',
   }
 } as const;
