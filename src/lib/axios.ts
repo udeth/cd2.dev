@@ -102,5 +102,8 @@ export const endpoints = {
     members: '/banjix/members',
     subject: '/banjix/subject',
     studentScore: '/banjix/student-score',
+  },
+  banjiy: {
+    members: '/banjiy/members',
   }
 } as const;
