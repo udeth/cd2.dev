@@ -27,7 +27,7 @@ const TABS = [
 export function BanjiOverview({ sx, ...other }: CardProps) {
   const theme = useTheme();
 
-  const tabs = useTabs('income');
+  const tabs = useTabs('banjix');
 
   const renderTitle = () => (
     <Box sx={{ flexGrow: 1 }}>
@@ -91,6 +91,10 @@ export function BanjiOverview({ sx, ...other }: CardProps) {
                   justifyContent: 'center',
                   bgcolor: 'primary.darker',
                   display: { xs: 'none', md: 'inline-flex' },
+                  ...(tab.value === 'banjix' && {
+                    color: 'warning.lighter',
+                    bgcolor: 'warning.darker',
+                  }),
                 }}
               >
                 <Iconify width={24} icon='eva:diagonal-arrow-right-up-fill'/>
