@@ -116,11 +116,32 @@ export function BanjiX() {
   }, []);
 
   // 处理成员点击事件
-  const handleMemberClick = (member: GetJoinedMembersNameNewEntity) => {
+  const handleMemberClick = async (member: GetJoinedMembersNameNewEntity) => {
     setSelectedMember(member);
     setDialogOpen(true);
-    setSelectedSubjectId('');
-    setStudentScore(null);
+    
+    // 默认选择第一个科目
+    if (subjects.length > 0) {
+      const firstSubject = subjects[0];
+      setSelectedSubjectId(firstSubject._id);
+      
+      try {
+        setScoreLoading(true);
+        const scoreData = await getStudentScoreBySubjectId({
+          source_id: firstSubject.score,
+          name: member.name,
+        });
+        setStudentScore(scoreData);
+      } catch (err) {
+        console.error('获取学生成绩失败:', err);
+        setStudentScore(null);
+      } finally {
+        setScoreLoading(false);
+      }
+    } else {
+      setSelectedSubjectId('');
+      setStudentScore(null);
+    }
   };
 
   // 处理科目选择
@@ -236,7 +257,7 @@ export function BanjiX() {
         fullWidth
       >
         <DialogTitle>
-          {selectedMember ? `${selectedMember.name} - 科目成绩` : '科目成绩'}
+          {selectedMember ? `${selectedMember.name} - Subject Score` : 'Subject Score'}
         </DialogTitle>
 
         <DialogContent>
@@ -244,11 +265,11 @@ export function BanjiX() {
             {/* 科目选择区域 */}
             <Box>
               <FormControl fullWidth sx={{ mt: 1 }}>
-                <InputLabel id="subject-select-label" shrink>选择科目</InputLabel>
+                <InputLabel id="subject-select-label" shrink>Select Subject</InputLabel>
                 <Select
                   labelId="subject-select-label"
                   value={selectedSubjectId}
-                  label="选择科目"
+                  label="Select Subject"
                   onChange={(e) => handleSubjectChange(e.target.value)}
                   disabled={subjectsLoading}
                   notched
@@ -275,7 +296,7 @@ export function BanjiX() {
             {selectedSubjectId && (
               <Box>
                 <Typography variant="h6" gutterBottom>
-                  成绩详情
+                  Score Details
                 </Typography>
 
                 {scoreLoading ? (
@@ -286,26 +307,17 @@ export function BanjiX() {
                   <Stack spacing={2}>
                     <Box>
                       <Typography variant="subtitle2" color="text.secondary">
-                        学生姓名
+                        Student Name
                       </Typography>
                       <Typography variant="body1">
                         {studentScore.name}
                       </Typography>
                     </Box>
 
-                    <Box>
-                      <Typography variant="subtitle2" color="text.secondary">
-                        状态
-                      </Typography>
-                      <Typography variant="body1">
-                        {studentScore.status}
-                      </Typography>
-                    </Box>
-
                     {studentScore.studentScore.comment && (
                       <Box>
                         <Typography variant="subtitle2" color="text.secondary">
-                          评语
+                          Comment
                         </Typography>
                         <Typography variant="body1">
                           {studentScore.studentScore.comment}
@@ -316,7 +328,7 @@ export function BanjiX() {
                     {studentScore.studentScore.score_detail && studentScore.studentScore.score_detail.length > 0 && (
                       <Box>
                         <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                          分数详情
+                          Score Details
                         </Typography>
                         <Stack spacing={1}>
                           {studentScore.studentScore.score_detail.map((detail, index) => (
@@ -344,7 +356,7 @@ export function BanjiX() {
                   </Stack>
                 ) : (
                   <Typography variant="body2" color="text.secondary">
-                    暂无成绩数据
+                    No score data
                   </Typography>
                 )}
               </Box>
@@ -354,7 +366,7 @@ export function BanjiX() {
 
         <DialogActions>
           <Button onClick={handleCloseDialog}>
-            关闭
+            Close
           </Button>
         </DialogActions>
       </Dialog>
