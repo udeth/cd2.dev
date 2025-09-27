@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import { Iconify } from 'src/components/iconify';
 import { BanjiX } from './banjix';
+import { BanjiY } from './banjiy';
 // ----------------------------------------------------------------------
 
 const TABS = [
@@ -128,13 +129,7 @@ export function BanjiOverview({ sx, ...other }: CardProps) {
       {renderTabs()}
 
       {tabs.value === 'banjix' && <BanjiX />}
-      {tabs.value === 'banjiy' && (
-        <Box sx={{ p: 3, textAlign: 'center' }}>
-          <Typography variant="h6" color="text.secondary">
-            BanjiY will be released soon...
-          </Typography>
-        </Box>
-      )}
+      {tabs.value === 'banjiy' && <BanjiY />}
     </Card>
   );
 }
