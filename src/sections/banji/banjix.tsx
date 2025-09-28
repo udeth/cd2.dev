@@ -46,7 +46,6 @@ function MemberCard({ member, onClick }: MemberCardProps) {
         transition: 'all 0.3s ease',
         '&:hover': {
           boxShadow: (theme) => theme.vars.customShadows.z8,
-          transform: 'translateY(-2px)',
         },
       }}
     >
@@ -55,7 +54,6 @@ function MemberCard({ member, onClick }: MemberCardProps) {
           width: 28,
           height: 28,
           mr: 1,
-          bgcolor: 'primary.main',
           fontSize: '0.75rem',
           fontWeight: 'bold',
         }}
