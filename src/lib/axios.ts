@@ -105,5 +105,7 @@ export const endpoints = {
   },
   banjiy: {
     members: '/banjiy/members',
+    subject: '/banjiy/subject',
+    studentScore: '/banjiy/student-score',
   }
 } as const;
