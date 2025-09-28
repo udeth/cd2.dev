@@ -90,6 +90,7 @@ export function BanjiX({ members, subjects, loading, error }: BanjiXProps) {
   const handleMemberClick = async (member: GetJoinedMembersNameNewEntity) => {
     setSelectedMember(member);
     setDialogOpen(true);
+    setStudentScore(null); // 清空之前的成绩数据
     
     // 默认选择第一个科目
     if (subjects.length > 0) {
@@ -118,6 +119,9 @@ export function BanjiX({ members, subjects, loading, error }: BanjiXProps) {
   // 处理科目选择
   const handleSubjectChange = async (subjectId: string) => {
     if (!selectedMember || !subjectId) return;
+    
+    // 如果当前选择的科目ID与要设置的相同，且正在加载，则不重复请求
+    if (selectedSubjectId === subjectId && scoreLoading) return;
 
     setSelectedSubjectId(subjectId);
     setStudentScore(null);

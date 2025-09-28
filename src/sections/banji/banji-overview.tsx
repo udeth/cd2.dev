@@ -1,5 +1,5 @@
 import type { CardProps } from '@mui/material/Card';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 import { useTabs } from 'minimal-shared/hooks';
 
@@ -61,11 +61,17 @@ export function BanjiOverview({ sx, ...other }: CardProps) {
   const [banjiYLoading, setBanjiYLoading] = useState(false);
   const [banjiYError, setBanjiYError] = useState<string | null>(null);
 
+  // 用于防止重复请求的 ref
+  const banjiXLoadingRef = useRef(false);
+  const banjiYLoadingRef = useRef(false);
+
   // 加载 BanjiX 数据
-  const loadBanjiXData = async () => {
-    if (banjiXMembers.length > 0 && banjiXSubjects.length > 0) return; // 避免重复请求
+  const loadBanjiXData = useCallback(async () => {
+    // 如果数据已存在或正在请求中，避免重复请求
+    if ((banjiXMembers.length > 0 && banjiXSubjects.length > 0) || banjiXLoadingRef.current) return;
 
     try {
+      banjiXLoadingRef.current = true;
       setBanjiXLoading(true);
       setBanjiXError(null);
       
@@ -81,14 +87,17 @@ export function BanjiOverview({ sx, ...other }: CardProps) {
       setBanjiXError(err instanceof Error ? err.message : '获取数据失败');
     } finally {
       setBanjiXLoading(false);
+      banjiXLoadingRef.current = false;
     }
-  };
+  }, [banjiXMembers.length, banjiXSubjects.length]);
 
   // 加载 BanjiY 数据
-  const loadBanjiYData = async () => {
-    if (banjiYMembers.length > 0 && banjiYSubjects.length > 0) return; // 避免重复请求
+  const loadBanjiYData = useCallback(async () => {
+    // 如果数据已存在或正在请求中，避免重复请求
+    if ((banjiYMembers.length > 0 && banjiYSubjects.length > 0) || banjiYLoadingRef.current) return;
 
     try {
+      banjiYLoadingRef.current = true;
       setBanjiYLoading(true);
       setBanjiYError(null);
       
@@ -104,8 +113,9 @@ export function BanjiOverview({ sx, ...other }: CardProps) {
       setBanjiYError(err instanceof Error ? err.message : '获取数据失败');
     } finally {
       setBanjiYLoading(false);
+      banjiYLoadingRef.current = false;
     }
-  };
+  }, [banjiYMembers.length, banjiYSubjects.length]);
 
   // 当 tab 切换时加载对应数据
   useEffect(() => {
@@ -114,7 +124,7 @@ export function BanjiOverview({ sx, ...other }: CardProps) {
     } else if (tabs.value === 'banjiy') {
       loadBanjiYData();
     }
-  }, [tabs.value]);
+  }, [tabs.value, loadBanjiXData, loadBanjiYData]);
 
   const renderTitle = () => (
     <Box sx={{ flexGrow: 1 }}>
