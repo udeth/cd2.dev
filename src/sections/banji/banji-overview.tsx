@@ -1,4 +1,5 @@
 import type { CardProps } from '@mui/material/Card';
+import { useState, useEffect } from 'react';
 
 import { useTabs } from 'minimal-shared/hooks';
 
@@ -8,10 +9,26 @@ import Card from '@mui/material/Card';
 import Tabs from '@mui/material/Tabs';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+import CircularProgress from '@mui/material/CircularProgress';
+import Stack from '@mui/material/Stack';
 import { useTheme } from '@mui/material/styles';
 import { Iconify } from 'src/components/iconify';
 import { BanjiX } from './banjix';
 import { BanjiY } from './banjiy';
+
+// 导入 BanjiX 相关类型和API
+import { getMembers as getBanjiXMembers, getSubject as getBanjiXSubject } from 'src/actions/banjix';
+import type {
+  GetJoinedMembersNameNewEntity,
+  GetParentDataItem
+} from 'src/types/api/banjix';
+
+// 导入 BanjiY 相关类型和API
+import { getMembers as getBanjiYMembers, getSubject as getBanjiYSubject } from 'src/actions/banjiy';
+import type {
+  GetClassStudentsData,
+  DataItem
+} from 'src/types/api/banjiy';
 // ----------------------------------------------------------------------
 
 const TABS = [
@@ -31,6 +48,73 @@ export function BanjiOverview({ sx, ...other }: CardProps) {
   const theme = useTheme();
 
   const tabs = useTabs('banjix');
+
+  // BanjiX 数据状态
+  const [banjiXMembers, setBanjiXMembers] = useState<GetJoinedMembersNameNewEntity[]>([]);
+  const [banjiXSubjects, setBanjiXSubjects] = useState<GetParentDataItem[]>([]);
+  const [banjiXLoading, setBanjiXLoading] = useState(false);
+  const [banjiXError, setBanjiXError] = useState<string | null>(null);
+
+  // BanjiY 数据状态
+  const [banjiYMembers, setBanjiYMembers] = useState<GetClassStudentsData[]>([]);
+  const [banjiYSubjects, setBanjiYSubjects] = useState<DataItem[]>([]);
+  const [banjiYLoading, setBanjiYLoading] = useState(false);
+  const [banjiYError, setBanjiYError] = useState<string | null>(null);
+
+  // 加载 BanjiX 数据
+  const loadBanjiXData = async () => {
+    if (banjiXMembers.length > 0 && banjiXSubjects.length > 0) return; // 避免重复请求
+
+    try {
+      setBanjiXLoading(true);
+      setBanjiXError(null);
+      
+      const [membersData, subjectsData] = await Promise.all([
+        getBanjiXMembers({}),
+        getBanjiXSubject({})
+      ]);
+      
+      setBanjiXMembers(membersData);
+      setBanjiXSubjects(subjectsData);
+    } catch (err) {
+      console.error('获取 BanjiX 数据失败:', err);
+      setBanjiXError(err instanceof Error ? err.message : '获取数据失败');
+    } finally {
+      setBanjiXLoading(false);
+    }
+  };
+
+  // 加载 BanjiY 数据
+  const loadBanjiYData = async () => {
+    if (banjiYMembers.length > 0 && banjiYSubjects.length > 0) return; // 避免重复请求
+
+    try {
+      setBanjiYLoading(true);
+      setBanjiYError(null);
+      
+      const [membersData, subjectsData] = await Promise.all([
+        getBanjiYMembers({}),
+        getBanjiYSubject({})
+      ]);
+      
+      setBanjiYMembers(membersData);
+      setBanjiYSubjects(subjectsData);
+    } catch (err) {
+      console.error('获取 BanjiY 数据失败:', err);
+      setBanjiYError(err instanceof Error ? err.message : '获取数据失败');
+    } finally {
+      setBanjiYLoading(false);
+    }
+  };
+
+  // 当 tab 切换时加载对应数据
+  useEffect(() => {
+    if (tabs.value === 'banjix') {
+      loadBanjiXData();
+    } else if (tabs.value === 'banjiy') {
+      loadBanjiYData();
+    }
+  }, [tabs.value]);
 
   const renderTitle = () => (
     <Box sx={{ flexGrow: 1 }}>
@@ -128,8 +212,22 @@ export function BanjiOverview({ sx, ...other }: CardProps) {
 
       {renderTabs()}
 
-      {tabs.value === 'banjix' && <BanjiX />}
-      {tabs.value === 'banjiy' && <BanjiY />}
+      {tabs.value === 'banjix' && (
+        <BanjiX 
+          members={banjiXMembers}
+          subjects={banjiXSubjects}
+          loading={banjiXLoading}
+          error={banjiXError}
+        />
+      )}
+      {tabs.value === 'banjiy' && (
+        <BanjiY 
+          members={banjiYMembers}
+          subjects={banjiYSubjects}
+          loading={banjiYLoading}
+          error={banjiYError}
+        />
+      )}
     </Card>
   );
 }

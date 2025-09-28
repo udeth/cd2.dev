@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -17,7 +17,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 
-import { getMembers, getSubject, getStudentScore } from 'src/actions/banjiy';
+import { getStudentScore } from 'src/actions/banjiy';
 import type { 
   GetClassStudentsData, 
   DataItem,
@@ -72,14 +72,14 @@ function MemberCard({ member, onClick }: MemberCardProps) {
 
 // ----------------------------------------------------------------------
 
-export function BanjiY() {
-  const [members, setMembers] = useState<GetClassStudentsData[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+interface BanjiYProps {
+  members: GetClassStudentsData[];
+  subjects: DataItem[];
+  loading: boolean;
+  error: string | null;
+}
 
-  // 科目状态
-  const [subjects, setSubjects] = useState<DataItem[]>([]);
-  const [subjectsLoading, setSubjectsLoading] = useState(false);
+export function BanjiY({ members, subjects, loading, error }: BanjiYProps) {
   
   // 弹窗状态
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -87,33 +87,6 @@ export function BanjiY() {
   const [selectedSubjectId, setSelectedSubjectId] = useState<string>('');
   const [studentScore, setStudentScore] = useState<GetStudentScoreResponse | null>(null);
   const [scoreLoading, setScoreLoading] = useState(false);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        setSubjectsLoading(true);
-        setError(null);
-        
-        // 并行加载成员列表和科目列表
-        const [membersData, subjectsData] = await Promise.all([
-          getMembers({}),
-          getSubject({})
-        ]);
-        
-        setMembers(membersData);
-        setSubjects(subjectsData);
-      } catch (err) {
-        console.error('获取数据失败:', err);
-        setError(err instanceof Error ? err.message : '获取数据失败');
-      } finally {
-        setLoading(false);
-        setSubjectsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
 
   // 处理成员点击事件
   const handleMemberClick = async (member: GetClassStudentsData) => {
@@ -271,7 +244,7 @@ export function BanjiY() {
                   value={selectedSubjectId}
                   label="Select Subject"
                   onChange={(e) => handleSubjectChange(e.target.value)}
-                  disabled={subjectsLoading}
+                  disabled={loading}
                   notched
                 >
                   {subjects.map((subject) => (
