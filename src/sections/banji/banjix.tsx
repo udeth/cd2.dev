@@ -228,7 +228,7 @@ export function BanjiX({ members, subjects, loading, error }: BanjiXProps) {
         fullWidth
       >
         <DialogTitle>
-          {selectedMember ? `${selectedMember.name} - Subject Score` : 'Subject Score'}
+          {selectedMember ? `${selectedMember.name}` : 'Student Name'}
         </DialogTitle>
 
         <DialogContent>

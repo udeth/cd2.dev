@@ -230,7 +230,7 @@ export function BanjiY({ members, subjects, loading, error }: BanjiYProps) {
         fullWidth
       >
         <DialogTitle>
-          {selectedMember ? `${selectedMember.studentName} - Subject Score` : 'Subject Score'}
+          {selectedMember ? `${selectedMember.studentName}` : 'Student Name'}
         </DialogTitle>
 
         <DialogContent>
@@ -278,7 +278,23 @@ export function BanjiY({ members, subjects, loading, error }: BanjiYProps) {
                   </Box>
                 ) : studentScore ? (
                   <Stack spacing={2}>
-                    {/* 评论信息展示 */}
+                    {/* 排名信息展示 */}
+                    {studentScore.columnData && studentScore.columnData.some(detail => detail.showRank && detail.rank) && (
+                      <Box>
+                        <Typography variant="subtitle2" color="text.secondary">
+                          Rank
+                        </Typography>
+                        {studentScore.columnData
+                          .filter(detail => detail.showRank && detail.rank)
+                          .map((detail, index) => (
+                            <Typography key={index} variant="h4" color="primary" fontWeight="bold">
+                              #{detail.rank}
+                            </Typography>
+                          ))[0]
+                        }
+                      </Box>
+                    )}
+
                     {studentScore.comment && (
                       <Box>
                         <Typography variant="subtitle2" color="text.secondary">
@@ -290,16 +306,15 @@ export function BanjiY({ members, subjects, loading, error }: BanjiYProps) {
                       </Box>
                     )}
 
-                    {/* 成绩详情展示 */}
                     {studentScore.columnData && studentScore.columnData.length > 0 && (
                       <Box>
                         <Typography variant="subtitle2" color="text.secondary" gutterBottom>
                           Score Details
                         </Typography>
                         <Stack spacing={1}>
-                          {studentScore.columnData.map((detail, index) => (
+                          {studentScore.columnData.slice(1).map((detail, index) => (
                             <Box
-                              key={index}
+                              key={index + 1}
                               sx={{
                                 display: 'flex',
                                 justifyContent: 'space-between',
@@ -311,31 +326,12 @@ export function BanjiY({ members, subjects, loading, error }: BanjiYProps) {
                               <Typography variant="body2">
                                 {detail.headName}
                               </Typography>
-                              <Stack direction="row" spacing={1} alignItems="center">
-                                <Typography variant="body2" fontWeight="bold">
-                                  {detail.fieldValue}
-                                </Typography>
-                                {detail.showRank && detail.rank && (
-                                  <Typography variant="caption" color="text.secondary">
-                                    Rank: {detail.rank}
-                                  </Typography>
-                                )}
-                              </Stack>
+                              <Typography variant="body2" fontWeight="bold">
+                                {detail.fieldValue}
+                              </Typography>
                             </Box>
                           ))}
                         </Stack>
-                      </Box>
-                    )}
-
-                    {/* 家长签名状态 */}
-                    {studentScore.isParentSignature && (
-                      <Box>
-                        <Typography variant="subtitle2" color="text.secondary">
-                          Parent Signature
-                        </Typography>
-                        <Typography variant="body2" color="success.main">
-                          ✓ Signed
-                        </Typography>
                       </Box>
                     )}
                   </Stack>
