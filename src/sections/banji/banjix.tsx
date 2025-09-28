@@ -305,15 +305,6 @@ export function BanjiX() {
                   </Box>
                 ) : studentScore ? (
                   <Stack spacing={2}>
-                    <Box>
-                      <Typography variant="subtitle2" color="text.secondary">
-                        Student Name
-                      </Typography>
-                      <Typography variant="body1">
-                        {studentScore.name}
-                      </Typography>
-                    </Box>
-
                     {studentScore.studentScore.comment && (
                       <Box>
                         <Typography variant="subtitle2" color="text.secondary">
