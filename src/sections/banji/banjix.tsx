@@ -303,6 +303,18 @@ export function BanjiX() {
                   </Box>
                 ) : studentScore ? (
                   <Stack spacing={2}>
+                    {/* 排名信息展示 */}
+                    {studentScore.studentScore.total_info?.rank && (
+                      <Box>
+                        <Typography variant="subtitle2" color="text.secondary">
+                          Rank
+                        </Typography>
+                        <Typography variant="h4" color="primary" fontWeight="bold">
+                          #{studentScore.studentScore.total_info.rank}
+                        </Typography>
+                      </Box>
+                    )}
+
                     {studentScore.studentScore.comment && (
                       <Box>
                         <Typography variant="subtitle2" color="text.secondary">
