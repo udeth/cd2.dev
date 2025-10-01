@@ -4,6 +4,7 @@ import axios from 'axios';
 
 import { CONFIG } from 'src/global-config';
 import { toast } from 'src/components/snackbar';
+import { useAuthExpiredStore } from 'src/components/auth-expired-dialog';
 
 // ----------------------------------------------------------------------
 
@@ -34,25 +35,43 @@ axiosInstance.interceptors.response.use(
     const { data } = response;
     if (data && typeof data === 'object' && 'code' in data) {
       const { code, msg, message } = data as { code: number; msg?: string; message?: string };
-      
+
+      // 如果错误码为41，表示登录状态失效
+      if (code === 41) {
+        const { openDialog } = useAuthExpiredStore.getState();
+        openDialog();
+        return Promise.reject(new Error('Login expired'));
+      }
+
       // 如果错误码不为0，显示错误提示
       if (code !== 0) {
-        const errorMessage = msg || message || '请求失败';
+        const errorMessage = msg || message || 'Request failed';
         toast.error(errorMessage);
         return Promise.reject(new Error(errorMessage));
       }
     }
-    
+
     return response;
   },
   (error) => {
     const errorData = error?.response?.data;
+
+    // 检查错误响应中的 code 41
+    if (errorData && typeof errorData === 'object' && 'code' in errorData) {
+      const { code } = errorData as { code: number };
+      if (code === 41) {
+        const { openDialog } = useAuthExpiredStore.getState();
+        openDialog();
+        return Promise.reject(new Error('Login expired'));
+      }
+    }
+
     const message = errorData?.msg || errorData?.message || error?.message || 'Something went wrong!';
     console.error('Axios error:', message);
-    
+
     // 显示错误提示
     toast.error(message);
-    
+
     return Promise.reject(new Error(message));
   }
 );

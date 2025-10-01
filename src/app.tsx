@@ -13,6 +13,7 @@ import { Snackbar } from 'src/components/snackbar';
 import { ProgressBar } from 'src/components/progress-bar';
 import { MotionLazy } from 'src/components/animate/motion-lazy';
 import { SettingsDrawer, defaultSettings, SettingsProvider } from 'src/components/settings';
+import { AuthExpiredProvider } from 'src/components/auth-expired-dialog';
 
 import { CheckoutProvider } from 'src/sections/checkout/context';
 
@@ -54,6 +55,7 @@ export default function App({ children }: AppProps) {
                   <Snackbar />
                   <ProgressBar />
                   <SettingsDrawer defaultSettings={defaultSettings} />
+                  <AuthExpiredProvider />
                   {children}
                 </CheckoutProvider>
               </MotionLazy>
