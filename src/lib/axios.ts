@@ -3,6 +3,7 @@ import type { AxiosRequestConfig } from 'axios';
 import axios from 'axios';
 
 import { CONFIG } from 'src/global-config';
+import { toast } from 'src/components/snackbar';
 
 // ----------------------------------------------------------------------
 
@@ -28,10 +29,30 @@ const axiosInstance = axios.create({
 */
 
 axiosInstance.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // 检查响应数据中的错误码
+    const { data } = response;
+    if (data && typeof data === 'object' && 'code' in data) {
+      const { code, msg, message } = data as { code: number; msg?: string; message?: string };
+      
+      // 如果错误码不为0，显示错误提示
+      if (code !== 0) {
+        const errorMessage = msg || message || '请求失败';
+        toast.error(errorMessage);
+        return Promise.reject(new Error(errorMessage));
+      }
+    }
+    
+    return response;
+  },
   (error) => {
-    const message = error?.response?.data?.message || error?.message || 'Something went wrong!';
+    const errorData = error?.response?.data;
+    const message = errorData?.msg || errorData?.message || error?.message || 'Something went wrong!';
     console.error('Axios error:', message);
+    
+    // 显示错误提示
+    toast.error(message);
+    
     return Promise.reject(new Error(message));
   }
 );
